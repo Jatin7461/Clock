@@ -32,9 +32,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             manager.notify(0, notification.build());
 
 
-            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            Ringtone r = RingtoneManager.getRingtone(context, notify);
-            r.play();
+//            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+//            Ringtone r = RingtoneManager.getRingtone(context, notify);
+//            r.play();
         }
     }
 }
