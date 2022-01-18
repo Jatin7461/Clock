@@ -16,7 +16,6 @@
 
     <style name="customToolbar" parent="Widget.AppCompat.Toolbar">
 
-        <item name="android:">center</item>
 
     </style>
 </resources>
