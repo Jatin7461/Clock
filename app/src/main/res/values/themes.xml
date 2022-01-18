@@ -13,4 +13,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="customToolbar" parent="Widget.AppCompat.Toolbar">
+
+        <item name="android:">center</item>
+
+    </style>
 </resources>
