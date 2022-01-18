@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AlarmFragment">
+    android:background="@color/black"
+    tools:context=".Fragments.AlarmFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/alarm_toolbar"
@@ -13,12 +14,13 @@
         android:background="@color/cardview_dark_background" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/alarm_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+    <!--        android:id="@+id/alarm_list"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent" />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"

@@ -4,45 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Fragments.StopwatchFragment">
 
-    <FrameLayout
-        android:id="@+id/fragment"
+
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/stopwatch_button"
+        android:layout_height="240dp"
+        android:gravity="center"
+        android:text="00:00:00"
+        android:textSize="70sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/alarm_button"
+        android:id="@+id/start_stopwatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alarm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/stopwatch_button"
+        android:text="Start"
+        app:layout_constraintEnd_toStartOf="@+id/reset_stopwatch"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/reset_stopwatch" />
 
     <Button
-        android:id="@+id/stopwatch_button"
+        android:id="@+id/reset_stopwatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stopwatch"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/timer_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/alarm_button" />
-
-    <Button
-        android:id="@+id/timer_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Timer"
+        android:text="Reset"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/stopwatch_button" />
+        app:layout_constraintStart_toEndOf="@+id/start_stopwatch"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.094" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
