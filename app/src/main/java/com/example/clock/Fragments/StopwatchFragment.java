@@ -22,7 +22,7 @@ public class StopwatchFragment extends Fragment {
     private long startTime = 0, updateTime = 0, timeGap = 0, timeinMilli = 0;
     TextView screen;
     final Handler handler = new Handler();
-    private boolean startOrPause,resetOrCount;
+    private boolean startOrPause, resetOrCount;
 
 
     Runnable r = new Runnable() {
@@ -56,6 +56,7 @@ public class StopwatchFragment extends Fragment {
         mStartButton = view.findViewById(R.id.start_stopwatch);
         mResetButton = view.findViewById(R.id.reset_stopwatch);
         startOrPause = true;
+        resetOrCount = true;
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,12 +70,15 @@ public class StopwatchFragment extends Fragment {
                     startStopwatch();
                     mStartButton.setText(R.string.pause);
                     startOrPause = false;
+                    resetOrCount = false;
+
                     mResetButton.setText(R.string.count);
                 } else {
                     Toast.makeText(getContext(), "Stopwatch paused", Toast.LENGTH_SHORT).show();
                     pauseStopwatch();
                     mStartButton.setText(R.string.start);
                     startOrPause = true;
+                    resetOrCount = true;
                     mResetButton.setText(R.string.reset);
                 }
             }
@@ -82,8 +86,13 @@ public class StopwatchFragment extends Fragment {
         mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (resetOrCount) {
 
-                Toast.makeText(getContext(), "Stopwatch Stopped", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Stopwatch Reset", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    Toast.makeText(getContext(), "Stopwatch Count", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return view;
