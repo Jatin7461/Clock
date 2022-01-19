@@ -89,6 +89,8 @@ public class StopwatchFragment extends Fragment {
                 if (resetOrCount) {
 
                     Toast.makeText(getContext(), "Stopwatch Reset", Toast.LENGTH_SHORT).show();
+                    resetStopwatch();
+                    screen.setText(R.string.stopwatch_time);
                 } else {
 
                     Toast.makeText(getContext(), "Stopwatch Count", Toast.LENGTH_SHORT).show();
@@ -108,5 +110,10 @@ public class StopwatchFragment extends Fragment {
         timeGap += timeinMilli;
         handler.removeCallbacks(r);
 
+    }
+
+    private void resetStopwatch() {
+        timeGap = 0;
+        handler.removeCallbacks(r);
     }
 }
