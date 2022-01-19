@@ -57,6 +57,8 @@ public class StopwatchFragment extends Fragment {
         mResetButton = view.findViewById(R.id.reset_stopwatch);
         startOrPause = true;
         resetOrCount = true;
+        mStartButton.setText(R.string.start);
+        mResetButton.setText(R.string.reset);
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

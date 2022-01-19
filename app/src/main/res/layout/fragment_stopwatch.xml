@@ -23,7 +23,6 @@
         android:id="@+id/start_stopwatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
         app:layout_constraintEnd_toStartOf="@+id/reset_stopwatch"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,12 +32,19 @@
         android:id="@+id/reset_stopwatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/start_stopwatch"
         app:layout_constraintTop_toBottomOf="@+id/stopwatch_screen"
         app:layout_constraintVertical_bias="0.094" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reset_stopwatch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
