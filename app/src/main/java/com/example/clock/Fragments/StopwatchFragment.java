@@ -2,7 +2,6 @@ package com.example.clock.Fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -23,7 +22,7 @@ public class StopwatchFragment extends Fragment {
     private long startTime = 0, updateTime = 0, timeGap = 0, timeinMilli = 0;
     TextView screen;
     final Handler handler = new Handler();
-    private boolean startPause;
+    private boolean startOrPause,resetOrCount;
 
 
     Runnable r = new Runnable() {
@@ -56,7 +55,7 @@ public class StopwatchFragment extends Fragment {
 
         mStartButton = view.findViewById(R.id.start_stopwatch);
         mResetButton = view.findViewById(R.id.reset_stopwatch);
-        startPause = true;
+        startOrPause = true;
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,18 +63,18 @@ public class StopwatchFragment extends Fragment {
                 /**
                  * if startPause is true
                  */
-                if (startPause) {
+                if (startOrPause) {
 
                     Toast.makeText(getContext(), "Stopwatch Started", Toast.LENGTH_SHORT).show();
                     startStopwatch();
                     mStartButton.setText(R.string.pause);
-                    startPause = false;
+                    startOrPause = false;
                     mResetButton.setText(R.string.count);
                 } else {
                     Toast.makeText(getContext(), "Stopwatch paused", Toast.LENGTH_SHORT).show();
                     pauseStopwatch();
                     mStartButton.setText(R.string.start);
-                    startPause = true;
+                    startOrPause = true;
                     mResetButton.setText(R.string.reset);
                 }
             }
