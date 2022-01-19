@@ -93,27 +93,6 @@ public class StopwatchFragment extends Fragment {
     private void startStopwatch() {
 
         startTime = SystemClock.uptimeMillis();
-//        handler.post(new Runnable() {
-//            long milliseconds = 0;
-//
-//            @Override
-//            public void run() {
-//                timeinMilli = SystemClock.uptimeMillis() - startTime + 3599000 * 24;
-//                updateTime = timeGap + timeinMilli;
-//                int seconds = (int) (updateTime / 1000);
-//                milliseconds = updateTime % 1000;
-//                int minutes = seconds / 60;
-//                int hours = (minutes / 60) % 24;
-//                int realSeconds = seconds % 60;
-//                int realMinutes = minutes % 60;
-//                screen.setText(String.format("%02d", hours) + ":" + String.format("%02d", realMinutes) + ":" + String.format("%02d", realSeconds) + ":" + String.format("%03d", milliseconds));
-//
-//
-//                handler.postDelayed(this, 0);
-//
-//            }
-//        });
-
         handler.post(r);
     }
 

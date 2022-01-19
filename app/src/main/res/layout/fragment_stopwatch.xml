@@ -13,7 +13,7 @@
         android:layout_height="240dp"
         android:gravity="center"
         android:text="00:00:00:00"
-        android:textSize="60sp"
+        android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
