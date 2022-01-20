@@ -3,11 +3,11 @@ package com.example.clock.data;
 public class StopwatchCount {
 
     private String count;
-    private int presentTime;
-    private int previousTime;
+    private String presentTime;
+    private String previousTime;
 
-    public StopwatchCount(int presentTime, int previousTime, int count) {
-        this.count = "count" + count;
+    public StopwatchCount(String presentTime, String previousTime, int count) {
+        this.count = "count " + count;
         this.presentTime = presentTime;
         this.previousTime = previousTime;
     }
@@ -16,11 +16,11 @@ public class StopwatchCount {
         return count;
     }
 
-    public int getPresentTime() {
+    public String getPresentTime() {
         return presentTime;
     }
 
-    public int getPreviousTime() {
+    public String getPreviousTime() {
         return previousTime;
     }
 }

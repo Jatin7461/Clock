@@ -38,7 +38,7 @@ public class StopwatchFragment extends Fragment {
     StopwatchAdapter adapter;
     private int countNumber = 1;
 
-    private String presentTime, timeDifference, previousTime;
+    long presentTime = 0, timeDifference = 0;
 
 
     Runnable r = new Runnable() {
@@ -101,19 +101,23 @@ public class StopwatchFragment extends Fragment {
             public void onClick(View view) {
 
                 /**
-                 * if startPause is true
+                 * if startPause is true call startStopwatch()
+                 * set text of start button to pause , set startOrpause and resetOrCount to false
+                 *
                  */
                 if (startOrPause) {
-
-                    Toast.makeText(getContext(), "Stopwatch Started", Toast.LENGTH_SHORT).show();
                     startStopwatch();
                     mStartButton.setText(R.string.pause);
                     startOrPause = false;
                     resetOrCount = false;
 
                     mResetButton.setText(R.string.count);
-                } else {
-                    Toast.makeText(getContext(), "Stopwatch paused", Toast.LENGTH_SHORT).show();
+                }
+                /**
+                 * else call pauseStopwatch()
+                 * and do all these stuff
+                 */
+                else {
                     pauseStopwatch();
                     mStartButton.setText(R.string.start);
                     startOrPause = true;
@@ -130,8 +134,6 @@ public class StopwatchFragment extends Fragment {
 
                 //reset button is pressed
                 if (resetOrCount) {
-
-                    Toast.makeText(getContext(), "Stopwatch Reset", Toast.LENGTH_SHORT).show();
                     resetStopwatch();
                     countNumber = 1;
                     adapter.resetList();
@@ -139,31 +141,51 @@ public class StopwatchFragment extends Fragment {
                 }
                 //count button is pressed
                 else {
-                    list.add(0, new StopwatchCount(100, 20, countNumber));
+                    list.add(0, new StopwatchCount(screen.getText().toString(), setSecondTime(), countNumber));
                     countNumber += 1;
                     recyclerView.scrollToPosition(0);
                     adapter.updateList(list);
 
-                    Toast.makeText(getContext(), "Stopwatch Count", Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
         return view;
     }
 
+
+    //function to get difference between present time and previous lap
+    private String setSecondTime() {
+        presentTime = updateTime - timeDifference;
+        timeDifference = updateTime;
+        int milliSec = (int) presentTime % 1000;
+        int fakeSec = (int) presentTime / 1000;
+        int fakeMin = fakeSec / 60;
+        int hours = (fakeMin / 60) % 24;
+        int realSec = fakeSec % 60;
+        int realMin = fakeMin % 60;
+        return "+" + String.format("%02d", hours) + ":" + String.format("%02d", realMin) + ":" + String.format("%02d", realSec) + ":" + String.format("%03d", milliSec);
+
+    }
+
+    //start the handler for stopwatch
     private void startStopwatch() {
 
         startTime = SystemClock.uptimeMillis();
         handler.post(r);
     }
 
+    //stop the handler for stopwatch
     private void pauseStopwatch() {
         timeGap += timeinMilli;
         handler.removeCallbacks(r);
 
     }
 
+    //reset the stopwatch
     private void resetStopwatch() {
+        presentTime = 0;
+        timeDifference = 0;
         timeGap = 0;
         handler.removeCallbacks(r);
     }

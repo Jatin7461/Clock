@@ -41,8 +41,8 @@ public class StopwatchAdapter extends RecyclerView.Adapter<StopwatchAdapter.Stop
 
         StopwatchCount obj = list.get(position);
         holder.lapCount.setText(obj.getCount());
-        holder.presentTime.setText(Integer.toString(obj.getPresentTime()));
-        holder.timeDiff.setText(Integer.toString(obj.getPreviousTime()));
+        holder.presentTime.setText(obj.getPresentTime());
+        holder.timeDiff.setText(obj.getPreviousTime());
 
     }
 
