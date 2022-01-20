@@ -140,9 +140,10 @@ public class StopwatchFragment extends Fragment {
                 //count button is pressed
                 else {
                     list.add(0, new StopwatchCount(100, 20, countNumber));
-                    Log.v(TAG, "count number :" + countNumber);
                     countNumber += 1;
+                    recyclerView.scrollToPosition(0);
                     adapter.updateList(list);
+
                     Toast.makeText(getContext(), "Stopwatch Count", Toast.LENGTH_SHORT).show();
                 }
             }

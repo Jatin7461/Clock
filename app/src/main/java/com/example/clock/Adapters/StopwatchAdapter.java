@@ -40,10 +40,7 @@ public class StopwatchAdapter extends RecyclerView.Adapter<StopwatchAdapter.Stop
     public void onBindViewHolder(@NonNull StopwatchViewHolder holder, int position) {
 
         StopwatchCount obj = list.get(position);
-//        String count = Resources.getSystem().getString(R.string.count);
-        Log.v(TAG, "countNo:" + obj.getCount());
         holder.lapCount.setText(obj.getCount());
-
         holder.presentTime.setText(Integer.toString(obj.getPresentTime()));
         holder.timeDiff.setText(Integer.toString(obj.getPreviousTime()));
 
