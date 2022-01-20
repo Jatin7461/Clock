@@ -1,4 +1,4 @@
-package com.example.clock;
+package com.example.clock.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.clock.R;
 
 import java.util.zip.Inflater;
 
