@@ -1,6 +1,8 @@
 package com.example.clock.Adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 public class StopwatchAdapter extends RecyclerView.Adapter<StopwatchAdapter.StopwatchViewHolder> {
 
     private ArrayList<StopwatchCount> list;
+    private final String TAG = StopwatchAdapter.class.getName();
 
 
     public StopwatchAdapter(ArrayList<StopwatchCount> list) {
@@ -37,10 +40,12 @@ public class StopwatchAdapter extends RecyclerView.Adapter<StopwatchAdapter.Stop
     public void onBindViewHolder(@NonNull StopwatchViewHolder holder, int position) {
 
         StopwatchCount obj = list.get(position);
-        holder.lapCount.setText(R.string.count + obj.getCount());
-        obj.incrementCount();
-        holder.presentTime.setText(obj.getPresentTime());
-        holder.timeDiff.setText(obj.getPreviousTime());
+//        String count = Resources.getSystem().getString(R.string.count);
+        Log.v(TAG, "countNo:" + obj.getCount());
+        holder.lapCount.setText(obj.getCount());
+
+        holder.presentTime.setText(Integer.toString(obj.getPresentTime()));
+        holder.timeDiff.setText(Integer.toString(obj.getPreviousTime()));
 
     }
 
@@ -61,6 +66,17 @@ public class StopwatchAdapter extends RecyclerView.Adapter<StopwatchAdapter.Stop
 
         }
 
+    }
+
+    public void updateList(ArrayList<StopwatchCount> list) {
+        this.list = list;
+//        notifyItemChanged(list.size() - 1);
+        notifyItemInserted(0);
+    }
+
+    public void resetList() {
+        list.clear();
+        notifyDataSetChanged();
     }
 
 }

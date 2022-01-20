@@ -3,9 +3,12 @@ package com.example.clock.Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 
 public class StopwatchFragment extends Fragment {
 
+    private final String TAG = StopwatchFragment.class.getName();
+
     private Button mStartButton, mResetButton;
     View view;
     private long startTime = 0, updateTime = 0, timeGap = 0, timeinMilli = 0;
@@ -29,8 +34,9 @@ public class StopwatchFragment extends Fragment {
     final Handler handler = new Handler();
     private boolean startOrPause, resetOrCount;
 
-    ListView listView;
+    RecyclerView recyclerView;
     StopwatchAdapter adapter;
+    private int countNumber = 1;
 
     private String presentTime, timeDifference, previousTime;
 
@@ -69,9 +75,12 @@ public class StopwatchFragment extends Fragment {
 
         list = new ArrayList<>();
 
-        listView = view.findViewById(R.id.count_list);
+        //initialize the recycler view and adapter
+        recyclerView = view.findViewById(R.id.count_list);
         adapter = new StopwatchAdapter(list);
-
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
 
 
         //initialize start and reset buttons
@@ -124,11 +133,16 @@ public class StopwatchFragment extends Fragment {
 
                     Toast.makeText(getContext(), "Stopwatch Reset", Toast.LENGTH_SHORT).show();
                     resetStopwatch();
+                    countNumber = 1;
+                    adapter.resetList();
                     screen.setText(R.string.stopwatch_time);
                 }
                 //count button is pressed
                 else {
-                    list.add(new StopwatchCount(100, 20));
+                    list.add(0, new StopwatchCount(100, 20, countNumber));
+                    Log.v(TAG, "count number :" + countNumber);
+                    countNumber += 1;
+                    adapter.updateList(list);
                     Toast.makeText(getContext(), "Stopwatch Count", Toast.LENGTH_SHORT).show();
                 }
             }
