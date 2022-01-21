@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Clock">
         <activity
+            android:name=".AlarmActivity"
+            android:exported="false" />
+        <activity
             android:name=".NewAlarmActivity"
             android:exported="false" />
         <activity

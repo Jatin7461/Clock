@@ -52,6 +52,10 @@ public class NumberAdapter extends RecyclerView.Adapter<NumberAdapter.NumberAdap
             numberView = view.findViewById(R.id.number_list);
         }
 
+
+
     }
+
+
 
 }

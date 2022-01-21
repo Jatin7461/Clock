@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clock.Adapters.AlarmAdapter;
+import com.example.clock.AlarmActivity;
 import com.example.clock.NewAlarmActivity;
 import com.example.clock.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -35,8 +36,6 @@ public class AlarmFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
         addAlarm = view.findViewById(R.id.add_alarm_fab);
-
-
 
 
         //initialize recycler view and adapter
