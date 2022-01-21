@@ -40,7 +40,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
         String s = alarmList.get(position);
         holder.alarmTime.setText(s);
-        holder.alarmSwitch.toggle();
     }
 
     @Override
