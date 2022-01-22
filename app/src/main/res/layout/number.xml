@@ -3,11 +3,11 @@
     android:id="@+id/number_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp"
+
+
     android:gravity="center"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    android:textSize="24sp">
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:textSize="20sp">
 
 </TextView>

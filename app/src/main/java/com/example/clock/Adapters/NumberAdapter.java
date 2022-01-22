@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 public class NumberAdapter extends RecyclerView.Adapter<NumberAdapter.NumberAdapterViewHolder> {
 
-    private ArrayList<Integer> list = new ArrayList<>();
+    private ArrayList<String> list = new ArrayList<>();
 
-    public NumberAdapter(ArrayList<Integer> list) {
+    public NumberAdapter(ArrayList<String> list) {
         this.list = list;
     }
 
@@ -34,8 +34,8 @@ public class NumberAdapter extends RecyclerView.Adapter<NumberAdapter.NumberAdap
     @Override
     public void onBindViewHolder(@NonNull NumberAdapterViewHolder holder, int position) {
         int realpos = position % list.size();
-        int num = list.get(realpos);
-        holder.numberView.setText(Integer.toString(num));
+        String num = list.get(realpos);
+        holder.numberView.setText(num);
     }
 
     @Override
@@ -53,9 +53,7 @@ public class NumberAdapter extends RecyclerView.Adapter<NumberAdapter.NumberAdap
         }
 
 
-
     }
-
 
 
 }
