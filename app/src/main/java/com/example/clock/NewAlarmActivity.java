@@ -6,10 +6,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.clock.Adapters.NumberAdapter.NumberAdapterViewHolder;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.clock.Adapters.NumberAdapter;
 
@@ -18,11 +24,13 @@ import java.util.Arrays;
 
 public class NewAlarmActivity extends AppCompatActivity {
 
+    int n;
     private TextView toolbarTitle, hover;
     private ArrayList<Integer> hoursList;
     private ArrayList<Integer> minutesList;
     private RecyclerView hoursRecyclerView, minutesRecyclerView;
     private NumberAdapter hoursAdapter, minutesAdapter;
+    private Button mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,38 +45,67 @@ public class NewAlarmActivity extends AppCompatActivity {
             minutesList.add(i);
         }
 
+        mButton = findViewById(R.id.set_alarm);
+
         LinearLayoutManager hoursLayoutManager = new LinearLayoutManager(this);
 
+
         hoursRecyclerView = findViewById(R.id.hours_list);
+        final LinearSnapHelper hoursSnap = new LinearSnapHelper();
+        hoursSnap.attachToRecyclerView(hoursRecyclerView);
         hoursRecyclerView.setLayoutManager(hoursLayoutManager);
         hoursAdapter = new NumberAdapter(hoursList);
         hoursRecyclerView.setAdapter(hoursAdapter);
         hoursRecyclerView.getLayoutManager().scrollToPosition(Integer.MAX_VALUE / 2);
 
 
-        RecyclerView.OnFlingListener onFlingListener = new RecyclerView.OnFlingListener() {
-            @Override
-            public boolean onFling(int velocityX, int velocityY) {
-                Log.v("fling", "velocity: " + velocityY);
-                velocityY = 1000;
-                return false;
-            }
-        };
-
-        hoursRecyclerView.setOnFlingListener(onFlingListener);
-
-
         LinearLayoutManager minLayoutManager = new LinearLayoutManager(this);
         minutesRecyclerView = findViewById(R.id.minutes_list);
 
-        final LinearSnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(minutesRecyclerView);
+        final LinearSnapHelper minutesSnap = new LinearSnapHelper();
+        minutesSnap.attachToRecyclerView(minutesRecyclerView);
 
         minutesRecyclerView.setLayoutManager(minLayoutManager);
         minutesAdapter = new NumberAdapter(minutesList);
         minutesRecyclerView.setAdapter(minutesAdapter);
         minutesRecyclerView.getLayoutManager().scrollToPosition(Integer.MAX_VALUE / 2);
 
+
+        minutesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //some code when initially scrollState changes
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                //Some code while the list is scrolling
+                LinearLayoutManager lManager = (LinearLayoutManager) minutesRecyclerView.getLayoutManager();
+                int firstElementPosition = lManager.findFirstVisibleItemPosition();
+                n = firstElementPosition;
+            }
+        });
+        RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder)
+                minutesRecyclerView.findViewHolderForAdapterPosition(n);
+
+
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+
+                    View v = minutesRecyclerView.getChildAt(n);
+
+                    RecyclerView.ViewHolder viewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(n + 2);
+                    TextView t = viewHolder.itemView.findViewById(R.id.number_list);
+                    Log.v("tag", "" + t.getText().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
     }
 
