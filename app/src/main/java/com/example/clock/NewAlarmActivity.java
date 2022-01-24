@@ -2,14 +2,21 @@ package com.example.clock;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,9 +25,7 @@ import com.example.clock.Adapters.NumberAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -29,7 +34,7 @@ public class NewAlarmActivity extends AppCompatActivity {
     final int SCROLL = Integer.MAX_VALUE / 2;
 
     final String TAG = NewAlarmActivity.class.getName();
-
+    private final int id = 1;
     int hoursPosition, minutePosition;
     private TextView toolbarTitle, hover;
     private ArrayList<String> hoursList;
@@ -37,11 +42,16 @@ public class NewAlarmActivity extends AppCompatActivity {
     private RecyclerView hoursRecyclerView, minutesRecyclerView;
     private NumberAdapter hoursAdapter, minutesAdapter;
     private Button mButton;
+    private AlarmManager alarmManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_alarm);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
         toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setTextColor(getResources().getColor(R.color.white));
         hover = findViewById(R.id.hover);
@@ -111,23 +121,42 @@ public class NewAlarmActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-
-//                    View hoursv = minutesRecyclerView.getChildAt(hoursPosition);
-//                    View minv = hoursRecyclerView.getChildAt(minutePosition);
                     RecyclerView.ViewHolder minViewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
                     RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(minutePosition + 2);
 
                     TextView h = viewHolder.itemView.findViewById(R.id.number_list);
                     TextView m = minViewHolder.itemView.findViewById(R.id.number_list);
 
-                    String s = h.getText().toString() + ":" + m.getText().toString();
 
-                    Toast.makeText(NewAlarmActivity.this, s, Toast.LENGTH_SHORT).show();
+                    int hour = Integer.parseInt(h.getText().toString());
+                    int min = Integer.parseInt(m.getText().toString());
+
+                    PendingIntent pendingIntent;
+                    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(NewAlarmActivity.this, SetAlarm.class);
+                    pendingIntent = PendingIntent.getBroadcast(NewAlarmActivity.this, 0, intent, 0);
+
+
+                    intent.putExtra("ac", NewAlarmActivity.class);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, min);
+                    calendar.set(Calendar.SECOND, 0);
+                    Log.v(TAG, "hour: " + hour + " min " + min);
+
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    Log.v(TAG, "hour: " + hour + " min " + min);
+
+                    Context context = NewAlarmActivity.this;
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
     }
@@ -159,7 +188,6 @@ public class NewAlarmActivity extends AppCompatActivity {
         while (true) {
 
             String listitem = hoursList.get(i % hoursList.size());
-            Log.v(TAG, listitem);
             if (listitem.equals(hour)) {
                 hoursRecyclerView.scrollToPosition(i);
                 hoursRecyclerView.scrollToPosition(i - 2);
@@ -172,7 +200,6 @@ public class NewAlarmActivity extends AppCompatActivity {
         while (true) {
 
             String listitem = minutesList.get(i % minutesList.size());
-            Log.v(TAG, listitem);
             if (listitem.equals(min)) {
                 minutesRecyclerView.scrollToPosition(i);
                 minutesRecyclerView.scrollToPosition(i - 2);
