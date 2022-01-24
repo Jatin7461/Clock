@@ -31,12 +31,8 @@ public class SetAlarm extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
 
-        String time = intent.getStringExtra("time");
-        Log.v(TAG, "alarm called for " + time);
-        Toast.makeText(context, "wake up", Toast.LENGTH_LONG).show();
 
         try {
-
             Intent inten = new Intent(context, AlarmActivity.class);
             inten.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(inten);

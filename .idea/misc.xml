@@ -3,12 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Clock/app/src/main/res/layout/activity_alarm.xml" value="0.7825443786982249" />
+        <entry key="..\:/Clock/app/src/main/res/layout/activity_alarm.xml" value="0.25" />
         <entry key="..\:/Clock/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Clock/app/src/main/res/layout/activity_new_alarm.xml" value="0.16666666666666666" />
         <entry key="..\:/Clock/app/src/main/res/layout/alarms.xml" value="0.5" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_alarm.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_stopwatch.xml" value="0.209375" />
+        <entry key="..\:/Clock/app/src/main/res/layout/fragment_swipe_alarm.xml" value="0.22" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_timer.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/number.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/stopwatch_countlist.xml" value="0.5" />
