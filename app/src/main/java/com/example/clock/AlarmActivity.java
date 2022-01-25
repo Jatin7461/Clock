@@ -3,6 +3,7 @@ package com.example.clock;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.OnSwipe;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.MotionEventCompat;
@@ -29,65 +30,67 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.clock.Fragments.SwipeAlarm;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class AlarmActivity extends AppCompatActivity {
+public class AlarmActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final int alarms = 1;
     private ViewPager2 viewPager;
     //    private SwipeAlarmAdapter adapter;
-    final String TAG = AlarmActivity.class.getName();
+    private static final String TAG = AlarmActivity.class.getName();
 
     Ringtone r;
     Vibrator vibrator;
+
+    float dX;
+    float dY;
+    int lastAction;
+
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.v(TAG, "Action down " + dY);
+                Log.v(TAG, "default " + view.getY());
+                dX = view.getX() - event.getRawX();
+                dY = view.getY() - event.getRawY();
+                lastAction = MotionEvent.ACTION_DOWN;
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                if (view.getY() < -400) {
+                    finish();
+                }
+                Log.v(TAG, "Action move " + event.getRawY() + dY);
+                if (event.getRawY() + dY < 0)
+                    view.setY(event.getRawY() + dY);
+                lastAction = MotionEvent.ACTION_MOVE;
+                break;
+
+            default:
+
+                return false;
+        }
+        view.animate().translationY(0);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+        ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.alarm);
+        layout.setOnTouchListener(this);
 
-//        viewPager = findViewById(R.id.pager);
-//        adapter = new SwipeAlarmAdapter(this);
-//        viewPager.setAdapter(adapter);
-//        viewPager.setPageTransformer(new ZoomOutPageTransformer());
-//
-//        viewPager.setOnTouchListener(new OnSwipeTouchListener(this) {
-//            @Override
-//            public void onSwipeLeft() {
-//                super.onSwipeLeft();
-//                Log.v(TAG, "swiping");
-//            }
-//
-//            @Override
-//            public void onSwipeRight() {
-//                super.onSwipeRight();
-//                Log.v(TAG, "swiping");
-//            }
-//        });
 
-//        ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                Log.v(TAG, "pageScrolled");
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                Log.v(TAG, "pageSelected");
-//
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                Log.v(TAG, "onPageScrollStateChanged");
-//
-//            }
-//        };
+//        OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(this, layout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
 
@@ -121,6 +124,7 @@ public class AlarmActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         r = RingtoneManager.getRingtone(getApplicationContext(), notification);
         r.play();
@@ -153,7 +157,7 @@ public class AlarmActivity extends AppCompatActivity {
 
     }
 
-    @Override
+    //    @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_BUTTON_PRESS) {
@@ -162,7 +166,11 @@ public class AlarmActivity extends AppCompatActivity {
             Log.v(TAG, "swiping");
             finish();
             return true;
-        } else {
+        }
+//        if(action == MotionEvent.ACTION_MOVE){
+//
+//        }
+        else {
             Log.v(TAG, "nothing done");
 
         }
@@ -170,82 +178,58 @@ public class AlarmActivity extends AppCompatActivity {
         return false;
     }
 
-//    private class SwipeAlarmAdapter extends FragmentStateAdapter {
-//
-//        private SwipeAlarmAdapter(FragmentActivity fa) {
-//            super(fa);
-//        }
-//
-//        @NonNull
-//        @Override
-//        public Fragment createFragment(int position) {
-//            return new SwipeAlarm();
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return alarms;
-//        }
-//    }
 
-//    public class ZoomOutPageTransformer implements ViewPager2.PageTransformer {
-//        private static final float MIN_SCALE = 0.85f;
-//        private static final float MIN_ALPHA = 0.5f;
-//
-//        public void transformPage(View view, float position) {
-//            int pageWidth = view.getWidth();
-//            int pageHeight = view.getHeight();
-//
-//            if (position < -1) { // [-Infinity,-1)
-//                // This page is way off-screen to the left.
-//                Log.v(TAG, "swiping");
-//                finish();
-//
-//            }
-//        }
-//    }
+    public class OnSwipeTouchListener implements View.OnTouchListener {
+        private final GestureDetector gestureDetector;
+        Context context;
 
-//    public class OnSwipeTouchListener implements View.OnTouchListener {
-//
-//        private final GestureDetector gestureDetector;
-//
-//        public OnSwipeTouchListener(Context context) {
-//            gestureDetector = new GestureDetector(context, new GestureListener());
-//        }
-//
-//        public void onSwipeLeft() {
-//        }
-//
-//        public void onSwipeRight() {
-//        }
-//
-//        public boolean onTouch(View v, MotionEvent event) {
-//            return gestureDetector.onTouchEvent(event);
-//        }
-//
-//        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
-//
-//            private static final int SWIPE_DISTANCE_THRESHOLD = 100;
-//            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-//
-//            @Override
-//            public boolean onDown(MotionEvent e) {
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//                float distanceX = e2.getX() - e1.getX();
-//                float distanceY = e2.getY() - e1.getY();
-//                if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-//                    if (distanceX > 0)
-//                        onSwipeRight();
-//                    else
-//                        onSwipeLeft();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        }
-//    }
+        OnSwipeTouchListener(Context ctx, View mainView) {
+            gestureDetector = new GestureDetector(ctx, new GestureListener());
+            mainView.setOnTouchListener(this);
+            context = ctx;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        public class GestureListener extends
+                GestureDetector.SimpleOnGestureListener {
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+
+                    if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+
+                        } else {
+
+                            finish();
+                        }
+                        result = true;
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                return result;
+            }
+        }
+
+
+    }
+
+
 }
+
+
