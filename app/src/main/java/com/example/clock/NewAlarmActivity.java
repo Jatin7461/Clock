@@ -146,7 +146,9 @@ public class NewAlarmActivity extends AppCompatActivity {
                     Log.v(TAG, "hour: " + hour + " min " + min);
 
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                    Log.v(TAG, "hour: " + hour + " min " + min);
+//                    long a = 10000;
+//                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), a, pendingIntent);
+
 
                     Context context = NewAlarmActivity.this;
 

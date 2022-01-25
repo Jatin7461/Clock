@@ -33,6 +33,13 @@ public class SetAlarm extends BroadcastReceiver {
 
 
         try {
+            Log.v(TAG, intent.getAction().toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             Intent inten = new Intent(context, AlarmActivity.class);
             inten.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(inten);

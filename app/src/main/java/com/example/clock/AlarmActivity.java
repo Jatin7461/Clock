@@ -27,6 +27,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -39,46 +40,45 @@ import java.util.ArrayList;
 
 public class AlarmActivity extends AppCompatActivity implements View.OnTouchListener {
 
-    private static final int alarms = 1;
-    private ViewPager2 viewPager;
+
     //    private SwipeAlarmAdapter adapter;
     private static final String TAG = AlarmActivity.class.getName();
 
     Ringtone r;
     Vibrator vibrator;
 
-    float dX;
     float dY;
-    int lastAction;
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                Log.v(TAG, "Action down " + dY);
-                Log.v(TAG, "default " + view.getY());
-                dX = view.getX() - event.getRawX();
                 dY = view.getY() - event.getRawY();
-                lastAction = MotionEvent.ACTION_DOWN;
                 break;
-
             case MotionEvent.ACTION_MOVE:
-                if (view.getY() < -400) {
+                if (view.getY() < -200) {
                     finish();
                 }
-                Log.v(TAG, "Action move " + event.getRawY() + dY);
-                if (event.getRawY() + dY < 0)
+                if (event.getRawY() + dY < 0) {
                     view.setY(event.getRawY() + dY);
-                lastAction = MotionEvent.ACTION_MOVE;
+                }
                 break;
-
             default:
-
                 return false;
         }
         view.animate().translationY(0);
         return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_POWER) {
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
                 //deprecated in API 26
                 long a[] = new long[]{1000, 1000};
 
-                vibrator.vibrate(new long[]{1000, 1000}, 0);
+//                vibrator.vibrate(new long[]{1000, 1000}, 0);
             }
         } catch (Exception e) {
             e.printStackTrace();
