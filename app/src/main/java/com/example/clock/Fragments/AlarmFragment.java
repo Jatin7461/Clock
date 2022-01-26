@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class AlarmFragment extends Fragment {
 
-    private FloatingActionButton addAlarm;
+    private FloatingActionButton addAlarm, temp;
     private RecyclerView recyclerView;
     private AlarmAdapter adapter;
     private ArrayList<String> list;
@@ -37,6 +37,7 @@ public class AlarmFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
         addAlarm = view.findViewById(R.id.add_alarm_fab);
 
+        temp = view.findViewById(R.id.temp);
 
         //initialize recycler view and adapter
         list = new ArrayList<>();
@@ -55,6 +56,7 @@ public class AlarmFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
 
 
         return view;

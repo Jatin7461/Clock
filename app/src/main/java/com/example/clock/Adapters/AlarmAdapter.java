@@ -1,6 +1,7 @@
 package com.example.clock.Adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clock.R;
+import com.example.clock.provider.AlarmContract;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ import java.util.zip.Inflater;
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
 
     public ArrayList<String> alarmList;
+
+    public Cursor cursor;
 
     public AlarmAdapter(ArrayList<String> list) {
         this.alarmList = list;
@@ -38,8 +42,17 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     @Override
     public void onBindViewHolder(@NonNull AlarmViewHolder holder, int position) {
 
-        String s = alarmList.get(position);
-        holder.alarmTime.setText(s);
+        cursor.moveToPosition(position);
+
+        int hourId = cursor.getColumnIndex(AlarmContract.AlarmEntry.HOUR);
+
+        String hour = cursor.getString(hourId);
+        int minId = cursor.getColumnIndex(AlarmContract.AlarmEntry.MIN);
+        String min = cursor.getString(minId);
+//        String s = alarmList.get(position);
+        holder.alarmTime.setText(hour + ":" + min);
+
+
     }
 
     @Override

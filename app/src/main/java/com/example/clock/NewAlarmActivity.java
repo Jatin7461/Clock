@@ -14,6 +14,8 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import android.app.AlarmManager;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.clock.Adapters.NumberAdapter;
+import com.example.clock.provider.AlarmContract;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,7 +46,7 @@ public class NewAlarmActivity extends AppCompatActivity {
     private ArrayList<String> minutesList;
     private static RecyclerView hoursRecyclerView, minutesRecyclerView;
     private NumberAdapter hoursAdapter, minutesAdapter;
-    private Button mButton;
+    private Button mButton, addAlarm;
     private AlarmManager alarmManager;
     private WorkManager workManager;
 
@@ -55,6 +58,7 @@ public class NewAlarmActivity extends AppCompatActivity {
         workManager = WorkManager.getInstance(this);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
+        addAlarm = findViewById(R.id.add_new_alarm);
         toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setTextColor(getResources().getColor(R.color.white));
         hover = findViewById(R.id.hover);
@@ -169,6 +173,32 @@ public class NewAlarmActivity extends AppCompatActivity {
         });
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        addAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RecyclerView.ViewHolder minViewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
+                RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(minutePosition + 2);
+
+                TextView h = viewHolder.itemView.findViewById(R.id.number_list);
+                TextView m = minViewHolder.itemView.findViewById(R.id.number_list);
+
+                String hour = h.getText().toString();
+                String min = m.getText().toString();
+
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put("hour", hour);
+                contentValues.put("min", min);
+
+                Uri id = getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
+                if (id == null) {
+                    Toast.makeText(NewAlarmActivity.this, "Alarm not added", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    Toast.makeText(NewAlarmActivity.this, "Alarm added", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
 
