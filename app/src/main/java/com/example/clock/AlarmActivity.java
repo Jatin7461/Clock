@@ -118,7 +118,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
                 //deprecated in API 26
                 long a[] = new long[]{1000, 1000};
 
-//                vibrator.vibrate(new long[]{1000, 1000}, 0);
+                vibrator.vibrate(new long[]{1000, 1000}, 0);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,26 +157,26 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
     }
 
-    //    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getActionMasked();
-        if (action == MotionEvent.ACTION_BUTTON_PRESS) {
-            Log.v(TAG, "tapping");
-        } else if (action == MotionEvent.ACTION_SCROLL) {
-            Log.v(TAG, "swiping");
-            finish();
-            return true;
-        }
-//        if(action == MotionEvent.ACTION_MOVE){
+//    //    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        int action = event.getActionMasked();
+//        if (action == MotionEvent.ACTION_BUTTON_PRESS) {
+//            Log.v(TAG, "tapping");
+//        } else if (action == MotionEvent.ACTION_SCROLL) {
+//            Log.v(TAG, "swiping");
+//            finish();
+//            return true;
+//        }
+////        if(action == MotionEvent.ACTION_MOVE){
+////
+////        }
+//        else {
+//            Log.v(TAG, "nothing done");
 //
 //        }
-        else {
-            Log.v(TAG, "nothing done");
-
-        }
-
-        return false;
-    }
+//
+//        return false;
+//    }
 
 
     public class OnSwipeTouchListener implements View.OnTouchListener {

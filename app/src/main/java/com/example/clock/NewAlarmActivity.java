@@ -2,21 +2,21 @@ package com.example.clock;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,25 +31,28 @@ import java.util.Date;
 
 public class NewAlarmActivity extends AppCompatActivity {
 
+    final String HOUR = "hour", MIN = "min";
+
     final int SCROLL = Integer.MAX_VALUE / 2;
 
     final String TAG = NewAlarmActivity.class.getName();
-    private final int id = 1;
+    private int id = 1;
     int hoursPosition, minutePosition;
     private TextView toolbarTitle, hover;
     private ArrayList<String> hoursList;
     private ArrayList<String> minutesList;
-    private RecyclerView hoursRecyclerView, minutesRecyclerView;
+    private static RecyclerView hoursRecyclerView, minutesRecyclerView;
     private NumberAdapter hoursAdapter, minutesAdapter;
     private Button mButton;
     private AlarmManager alarmManager;
-
+    private WorkManager workManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_alarm);
 
+        workManager = WorkManager.getInstance(this);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         toolbarTitle = findViewById(R.id.toolbar_title);
@@ -131,30 +134,36 @@ public class NewAlarmActivity extends AppCompatActivity {
                     int hour = Integer.parseInt(h.getText().toString());
                     int min = Integer.parseInt(m.getText().toString());
 
-                    PendingIntent pendingIntent;
-                    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    Intent intent = new Intent(NewAlarmActivity.this, SetAlarm.class);
-                    pendingIntent = PendingIntent.getBroadcast(NewAlarmActivity.this, 0, intent, 0);
+//                    PendingIntent pendingIntent;
+//                    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//                    Intent intent = new Intent(NewAlarmActivity.this, SetAlarm.class);
+//                    pendingIntent = PendingIntent.getBroadcast(NewAlarmActivity.this, 0, intent, 0);
+//
+//
+//                    intent.putExtra("ac", NewAlarmActivity.class);
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.setTimeInMillis(System.currentTimeMillis());
+//                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+//                    calendar.set(Calendar.MINUTE, min);
+//                    calendar.set(Calendar.SECOND, 0);
+//                    Log.v(TAG, "hour: " + hour + " min " + min);
+//
+//                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
-
-                    intent.putExtra("ac", NewAlarmActivity.class);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(System.currentTimeMillis());
-                    calendar.set(Calendar.HOUR_OF_DAY, hour);
-                    calendar.set(Calendar.MINUTE, min);
-                    calendar.set(Calendar.SECOND, 0);
-                    Log.v(TAG, "hour: " + hour + " min " + min);
-
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-//                    long a = 10000;
-//                    alarmManager.setWindow(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), a, pendingIntent);
-
-
-                    Context context = NewAlarmActivity.this;
-
+                    Data data = new Data.Builder()
+                            .putInt(HOUR, hour)
+                            .putInt(MIN, min)
+                            .build();
+                    WorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
+//                    WorkRequest w = new PeriodicWorkRequest.Builder(MyWork.class).build();
+                    workManager.enqueue(workRequest);
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                } finally {
+                    Toast.makeText(NewAlarmActivity.this, "Alarm set", Toast.LENGTH_SHORT).show();
+                    finish();
+
                 }
             }
         });
