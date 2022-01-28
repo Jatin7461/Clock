@@ -40,13 +40,14 @@ public class MyWork extends Worker {
                 Toast.makeText(getApplicationContext(), "invalid time", Toast.LENGTH_SHORT).show();
                 Result.failure();
             }
+            int code = getInputData().getInt("pending", 0);
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, min);
             calendar.set(Calendar.SECOND, 0);
             Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), code, intent, 0);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
             return Result.success();

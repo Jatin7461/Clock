@@ -78,11 +78,51 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int match = uriMatcher.match(uri);
+        int rowsdeleted;
+        switch (match) {
+            case ALARM_ID:
+                String selection = AlarmContract.AlarmEntry._ID + "=?";
+                String selectionargs[] = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsdeleted = db.delete(AlarmContract.AlarmEntry.TABLE_NAME, selection, selectionargs);
+
+                break;
+            default:
+                throw new IllegalArgumentException("wrong uri");
+        }
+        if (rowsdeleted != 0) {
+            getContext().getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+        }
+        return rowsdeleted;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int match = uriMatcher.match(uri);
+        int rowsupdated = 0;
+        switch (match) {
+            case ALARM_ID:
+                String selection = AlarmContract.AlarmEntry._ID + "=?";
+                String selectionargs[] = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsupdated = db.update(AlarmContract.AlarmEntry.TABLE_NAME, contentValues, selection, selectionargs);
+
+                break;
+            default:
+                throw new IllegalArgumentException("failed to update");
+        }
+
+        if (rowsupdated != 0) {
+            Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
+            getContext().getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+        }
+        if (rowsupdated == 0) {
+
+            Toast.makeText(getContext(), "not updated", Toast.LENGTH_SHORT).show();
+        }
+        return rowsupdated;
     }
 }

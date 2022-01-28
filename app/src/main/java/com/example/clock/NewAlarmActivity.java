@@ -8,15 +8,18 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,14 +32,18 @@ import com.example.clock.provider.AlarmContract;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class NewAlarmActivity extends AppCompatActivity {
 
     final String HOUR = "hour", MIN = "min";
 
     final int SCROLL = Integer.MAX_VALUE / 2;
+
+    private int uniqueWork = 1;
 
     final String TAG = NewAlarmActivity.class.getName();
     private int id = 1;
@@ -49,6 +56,11 @@ public class NewAlarmActivity extends AppCompatActivity {
     private Button mButton, addAlarm;
     private AlarmManager alarmManager;
     private WorkManager workManager;
+//    private Alarm alarm;
+//
+//    private AlarmDatabase database;
+
+    private final int LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +70,14 @@ public class NewAlarmActivity extends AppCompatActivity {
         workManager = WorkManager.getInstance(this);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        addAlarm = findViewById(R.id.add_new_alarm);
+        addAlarm = findViewById(R.id.adding_alarm);
         toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setTextColor(getResources().getColor(R.color.white));
         hover = findViewById(R.id.hover);
+
+//        LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
+
+//        database = AlarmDatabase.getInstance(this);
 
         hoursList = new ArrayList<>();
         minutesList = new ArrayList<>();
@@ -138,30 +154,35 @@ public class NewAlarmActivity extends AppCompatActivity {
                     int hour = Integer.parseInt(h.getText().toString());
                     int min = Integer.parseInt(m.getText().toString());
 
-//                    PendingIntent pendingIntent;
-//                    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//                    Intent intent = new Intent(NewAlarmActivity.this, SetAlarm.class);
-//                    pendingIntent = PendingIntent.getBroadcast(NewAlarmActivity.this, 0, intent, 0);
-//
-//
-//                    intent.putExtra("ac", NewAlarmActivity.class);
-//                    Calendar calendar = Calendar.getInstance();
-//                    calendar.setTimeInMillis(System.currentTimeMillis());
-//                    calendar.set(Calendar.HOUR_OF_DAY, hour);
-//                    calendar.set(Calendar.MINUTE, min);
-//                    calendar.set(Calendar.SECOND, 0);
-//                    Log.v(TAG, "hour: " + hour + " min " + min);
-//
-//                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
                     Data data = new Data.Builder()
                             .putInt(HOUR, hour)
                             .putInt(MIN, min)
+                            .putInt("pending", uniqueWork)
                             .build();
-                    WorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
-//                    WorkRequest w = new PeriodicWorkRequest.Builder(MyWork.class).build();
-                    workManager.enqueue(workRequest);
+//                    uniqueWork++;
+                    Data data2 = new Data.Builder()
+                            .putInt(HOUR, hour)
+                            .putInt(MIN, min + 1)
+                            .putInt("pending", 2)
+                            .build();
+//
 
+//                    WorkRequest workRequest = new PeriodicWorkRequest.Builder(MyWork.class).setInputData(data).build();
+//                    WorkRequest w = new PeriodicWorkRequest.Builder(MyWork.class).build();
+//                    String uni = Integer.toString(uniqueWork);
+//                    workManager.enqueueUniquePeriodicWork(uni, ExistingPeriodicWorkPolicy.KEEP, workRequest);
+
+//                    PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(MyWork.class, 10, TimeUnit.SECONDS).setInputData(data).build();
+//                    workManager.enqueueUniquePeriodicWork("work", ExistingPeriodicWorkPolicy.KEEP, workRequest);
+
+                    OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
+                    OneTimeWorkRequest workRequest2 = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data2).build();
+//                    workManager.enqueueUniqueWork("work" + uniqueWork, ExistingWorkPolicy.APPEND, workRequest2);
+                    workManager.beginWith(Arrays.asList(workRequest, workRequest2)).enqueue();
+
+
+//                    workManager.enqueue(workRequest);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -171,7 +192,7 @@ public class NewAlarmActivity extends AppCompatActivity {
                 }
             }
         });
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
         addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,22 +206,25 @@ public class NewAlarmActivity extends AppCompatActivity {
                 String hour = h.getText().toString();
                 String min = m.getText().toString();
 
+
+//                alarm = new Alarm(hour, min);
+//                LoaderManager.getInstance(NewAlarmActivity.this).restartLoader(LOADER_ID, null, NewAlarmActivity.this);
+
                 ContentValues contentValues = new ContentValues();
+                contentValues.put(AlarmContract.AlarmEntry.HOUR, hour);
+                contentValues.put(AlarmContract.AlarmEntry.MIN, min);
+                contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
+                contentValues.put(AlarmContract.AlarmEntry.TIME, Integer.parseInt(hour + min));
 
-                contentValues.put("hour", hour);
-                contentValues.put("min", min);
-
-                Uri id = getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
-                if (id == null) {
-                    Toast.makeText(NewAlarmActivity.this, "Alarm not added", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    Toast.makeText(NewAlarmActivity.this, "Alarm added", Toast.LENGTH_SHORT).show();
-                }
+                getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
+//                getContentResolver().notifyAll();
+                getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+                finish();
             }
         });
 
     }
+
 
     @Override
     protected void onResume() {
@@ -249,6 +273,5 @@ public class NewAlarmActivity extends AppCompatActivity {
             i++;
         }
     }
-
 
 }
