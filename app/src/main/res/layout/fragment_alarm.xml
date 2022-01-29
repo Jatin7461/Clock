@@ -26,42 +26,42 @@
 <!--            android:textStyle="bold" />-->
     </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
-        android:id="@+id/frameLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarm_toolbar">
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frameLayout2"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/alarm_toolbar">-->
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/alarm_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+<!--        <ListView-->
+<!--            android:id="@+id/alarm_list"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
 
-            />
+<!--            />-->
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_alarm_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="16dp"
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/add_alarm_fab"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="bottom|center"-->
+<!--            android:layout_marginBottom="16dp"-->
 
-            />
+<!--            />-->
 
 
-    </FrameLayout>
+<!--    </FrameLayout>-->
 
-    <TextView
-        android:id="@+id/slide_up"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:text="7:00"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/frameLayout2" />
+<!--    <TextView-->
+<!--        android:id="@+id/slide_up"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="64dp"-->
+<!--        android:text="7:00"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/frameLayout2" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

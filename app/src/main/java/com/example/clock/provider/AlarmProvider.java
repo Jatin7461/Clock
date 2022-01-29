@@ -49,6 +49,7 @@ public class AlarmProvider extends ContentProvider {
                 throw new IllegalArgumentException("wrong uri");
 
         }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
 
     }
@@ -93,7 +94,7 @@ public class AlarmProvider extends ContentProvider {
                 throw new IllegalArgumentException("wrong uri");
         }
         if (rowsdeleted != 0) {
-            getContext().getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+            getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsdeleted;
     }
@@ -117,11 +118,11 @@ public class AlarmProvider extends ContentProvider {
 
         if (rowsupdated != 0) {
             Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
-            getContext().getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+            getContext().getContentResolver().notifyChange(uri, null);
         }
         if (rowsupdated == 0) {
 
-            Toast.makeText(getContext(), "not updated", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "not updated", Toast.LENGTH_SHORT).show();
         }
         return rowsupdated;
     }

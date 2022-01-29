@@ -13,6 +13,8 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.clock.provider.AlarmContract;
+
 import java.util.Calendar;
 
 public class MyWork extends Worker {
@@ -40,7 +42,7 @@ public class MyWork extends Worker {
                 Toast.makeText(getApplicationContext(), "invalid time", Toast.LENGTH_SHORT).show();
                 Result.failure();
             }
-            int code = getInputData().getInt("pending", 0);
+            int code = getInputData().getInt(AlarmContract.AlarmEntry.PENDING, 0);
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, hour);

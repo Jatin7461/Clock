@@ -7,19 +7,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
-import androidx.work.ExistingPeriodicWorkPolicy;
+
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class NewAlarmActivity extends AppCompatActivity {
 
@@ -43,7 +39,6 @@ public class NewAlarmActivity extends AppCompatActivity {
 
     final int SCROLL = Integer.MAX_VALUE / 2;
 
-    private int uniqueWork = 1;
 
     final String TAG = NewAlarmActivity.class.getName();
     private int id = 1;
@@ -158,13 +153,18 @@ public class NewAlarmActivity extends AppCompatActivity {
                     Data data = new Data.Builder()
                             .putInt(HOUR, hour)
                             .putInt(MIN, min)
-                            .putInt("pending", uniqueWork)
+                            .putInt(AlarmContract.AlarmEntry.PENDING, 1)
                             .build();
 //                    uniqueWork++;
                     Data data2 = new Data.Builder()
                             .putInt(HOUR, hour)
                             .putInt(MIN, min + 1)
-                            .putInt("pending", 2)
+                            .putInt(AlarmContract.AlarmEntry.PENDING, 2)
+                            .build();
+                    Data data3 = new Data.Builder()
+                            .putInt(HOUR, hour)
+                            .putInt(MIN, min + 2)
+                            .putInt(AlarmContract.AlarmEntry.PENDING, 3)
                             .build();
 //
 
@@ -178,8 +178,9 @@ public class NewAlarmActivity extends AppCompatActivity {
 
                     OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
                     OneTimeWorkRequest workRequest2 = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data2).build();
+                    OneTimeWorkRequest workRequest3 = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data3).build();
 //                    workManager.enqueueUniqueWork("work" + uniqueWork, ExistingWorkPolicy.APPEND, workRequest2);
-                    workManager.beginWith(Arrays.asList(workRequest, workRequest2)).enqueue();
+                    workManager.beginWith(Arrays.asList(workRequest, workRequest2, workRequest3)).enqueue();
 
 
 //                    workManager.enqueue(workRequest);
@@ -216,9 +217,20 @@ public class NewAlarmActivity extends AppCompatActivity {
                 contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
                 contentValues.put(AlarmContract.AlarmEntry.TIME, Integer.parseInt(hour + min));
 
-                getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
+
+                Uri uri = getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
+                int id = (int) ContentUris.parseId(uri);
+                Data data = new Data.Builder()
+                        .putInt(HOUR, Integer.parseInt(hour))
+                        .putInt(MIN, Integer.parseInt(min))
+                        .putInt(AlarmContract.AlarmEntry.PENDING, id)
+                        .build();
+
+                OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
+                workManager.enqueueUniqueWork("alarm " + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+
 //                getContentResolver().notifyAll();
-                getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+//                getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
                 finish();
             }
         });
@@ -248,7 +260,6 @@ public class NewAlarmActivity extends AppCompatActivity {
         Log.v(TAG, hour + ":" + min);
 
 //        boolean overflow=false;
-        int k = 0;
         int i = SCROLL;
         while (true) {
 
@@ -260,7 +271,6 @@ public class NewAlarmActivity extends AppCompatActivity {
             }
             i++;
         }
-        k = 0;
         i = SCROLL;
         while (true) {
 

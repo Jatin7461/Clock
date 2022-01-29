@@ -26,6 +26,7 @@ public class AlarmContract {
         public static final String FRIDAY = "friday";
         public static final String SATURDAY = "saturday";
         public static final String LABEL = "label";
+        public static final String PENDING = "pending";
         public static final String _ID = BaseColumns._ID;
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + _ID

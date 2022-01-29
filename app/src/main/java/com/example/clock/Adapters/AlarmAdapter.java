@@ -13,6 +13,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clock.R;
@@ -107,13 +108,15 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 //            alarmSwitch.setOnClickListener(this);
 
 
-//            alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                    onAlarmClickListener.switchClick(id, b);
-//
-//                }
-//            });
+            alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    onAlarmClickListener.switchClick(id, b);
+//                    Log.v("", "switch on for " + id);
+
+                }
+            });
+
         }
 
         @Override
@@ -124,6 +127,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     onAlarmClickListener.switchClick(id, b);
+
 
                 }
             });
