@@ -153,18 +153,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
                     }
 
-                    ListenableFuture<List<WorkInfo>> list = workManager.getWorkInfosByTag(AlarmContract.AlarmEntry.TABLE_NAME + id);
-                    try {
 
-                        List<WorkInfo> l = list.get();
-                        for (WorkInfo c : l) {
-                            if (c.getState() == WorkInfo.State.SUCCEEDED) {
-                                Toast.makeText(context, "alarm done", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
 
 
