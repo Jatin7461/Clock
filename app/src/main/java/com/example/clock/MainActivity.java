@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -21,6 +23,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.clock.Adapters.AlarmAdapter;
 import com.example.clock.Adapters.AlarmCursorAdapter;
 import com.example.clock.Fragments.AlarmFragment;
 import com.example.clock.Fragments.StopwatchFragment;
@@ -36,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Fragment mAlarmFragment, mStopwatchFragment;
     private ListView listView;
     private AlarmCursorAdapter adapter;
+    private RecyclerView recyclerView;
+    private AlarmAdapter recyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +57,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         StopwatchButton = findViewById(R.id.stopwatch_button);
         TimerButton = findViewById(R.id.timer_button);
 
-        listView = findViewById(R.id.list_of_alarms);
-        adapter = new AlarmCursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        listView.setAdapter(adapter);
+        recyclerView = findViewById(R.id.alarm_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerAdapter = new AlarmAdapter(this);
+        recyclerView.setAdapter(recyclerAdapter);
+
+//        listView = findViewById(R.id.list_of_alarms);
+//        adapter = new AlarmCursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+//        listView.setAdapter(adapter);
 
 
         AlarmButton.setOnClickListener(new View.OnClickListener() {
@@ -137,12 +148,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //
 //        WorkManager workManager = WorkManager.getInstance(this);
 //        workManager.beginWith(alarm).enqueue();
-        adapter.swapCursor(data);
+        recyclerAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        adapter.swapCursor(null);
+        recyclerAdapter.swapCursor(null);
     }
+
 
 }

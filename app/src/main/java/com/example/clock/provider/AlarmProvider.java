@@ -117,7 +117,7 @@ public class AlarmProvider extends ContentProvider {
         }
 
         if (rowsupdated != 0) {
-            Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
             getContext().getContentResolver().notifyChange(uri, null);
         }
         if (rowsupdated == 0) {

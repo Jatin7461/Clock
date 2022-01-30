@@ -1,5 +1,7 @@
 package com.example.clock.Adapters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,6 +25,10 @@ import androidx.work.WorkManager;
 import com.example.clock.MyWork;
 import com.example.clock.R;
 import com.example.clock.provider.AlarmContract;
+import com.example.clock.utils.AlarmUtils;
+
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class AlarmCursorAdapter extends CursorAdapter {
 
@@ -32,6 +38,7 @@ public class AlarmCursorAdapter extends CursorAdapter {
         super(context, c, flags);
         workManager = WorkManager.getInstance(context);
     }
+
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
@@ -81,15 +88,36 @@ public class AlarmCursorAdapter extends CursorAdapter {
                             .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
 
 
-                    OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
-                    workManager.enqueueUniqueWork("alarm " + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                    calendar.set(Calendar.MINUTE, Integer.parseInt(min));
+                    calendar.set(Calendar.SECOND, 0);
+
+                    long currentTime = System.currentTimeMillis();
+                    long calendarTime = calendar.getTimeInMillis();
+                    OneTimeWorkRequest oneTimeWorkRequest;
+                    if (calendarTime < currentTime) {
+                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+                                .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
+
+                    } else {
+                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+                                .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
+
+                    }
+//                    OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+//                            .setInitialDelay(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS).setInputData(data).build();
+                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+//                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
 
                 } else {
 
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
                     context.getContentResolver().update(uri, contentValues, null, null);
+                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
 
+//                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
 
                 }
             }

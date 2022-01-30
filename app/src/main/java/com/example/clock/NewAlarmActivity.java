@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.clock.Adapters.NumberAdapter;
 import com.example.clock.provider.AlarmContract;
+import com.example.clock.utils.AlarmUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class NewAlarmActivity extends AppCompatActivity {
 
@@ -40,6 +42,7 @@ public class NewAlarmActivity extends AppCompatActivity {
     final int SCROLL = Integer.MAX_VALUE / 2;
 
 
+    private final int DAY = 24 * 60 * 60 * 1000;
     final String TAG = NewAlarmActivity.class.getName();
     private int id = 1;
     int hoursPosition, minutePosition;
@@ -226,11 +229,32 @@ public class NewAlarmActivity extends AppCompatActivity {
                         .putInt(AlarmContract.AlarmEntry.PENDING, id)
                         .build();
 
-                OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
-                workManager.enqueueUniqueWork("alarm " + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
 
-//                getContentResolver().notifyAll();
-//                getContentResolver().notifyChange(AlarmContract.AlarmEntry.CONTENT_URI, null);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                calendar.set(Calendar.MINUTE, Integer.parseInt(min));
+                calendar.set(Calendar.SECOND, 0);
+
+                long currentTime = System.currentTimeMillis();
+                long calendarTime = calendar.getTimeInMillis();
+                OneTimeWorkRequest oneTimeWorkRequest;
+                if (calendarTime < currentTime) {
+                    oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+                            .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY , TimeUnit.MILLISECONDS).build();
+
+                } else {
+                    oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+                            .setInputData(data).setInitialDelay(calendarTime - currentTime , TimeUnit.MILLISECONDS).build();
+
+                }
+//                OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
+                workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTimeInMillis(System.currentTimeMillis());
+//                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+//                calendar.set(Calendar.MINUTE, Integer.parseInt(min));
+                AlarmUtils.showMessage(NewAlarmActivity.this, calendar);
                 finish();
             }
         });
