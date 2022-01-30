@@ -108,7 +108,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
                     Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
                     if (b) {
-//                    Toast.makeText(context, "yes", Toast.LENGTH_SHORT).show();
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
                         context.getContentResolver().update(uri, contentValues, null, null);
