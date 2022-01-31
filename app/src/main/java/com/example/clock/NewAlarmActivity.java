@@ -3,6 +3,7 @@ package com.example.clock;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,7 @@ import androidx.work.WorkManager;
 import android.app.AlarmManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +56,9 @@ public class NewAlarmActivity extends AppCompatActivity {
     private Button mButton, addAlarm;
     private AlarmManager alarmManager;
     private WorkManager workManager;
+    private Toolbar toolbar;
+    private Intent intent;
+    private int intentCode;
 //    private Alarm alarm;
 //
 //    private AlarmDatabase database;
@@ -69,9 +74,13 @@ public class NewAlarmActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         addAlarm = findViewById(R.id.adding_alarm);
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setTextColor(getResources().getColor(R.color.white));
+//        toolbarTitle = findViewById(R.id.toolbar_title);
+//        toolbarTitle.setTextColor(getResources().getColor(R.color.white));
         hover = findViewById(R.id.hover);
+        intent = getIntent();
+        intentCode = intent.getIntExtra(AlarmContract.AlarmEntry.EDIT_ALARM, -1);
+        toolbar = findViewById(R.id.toolbar_add_alarm);
+
 
 //        LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
 
@@ -137,70 +146,25 @@ public class NewAlarmActivity extends AppCompatActivity {
             }
         });
 
+        if (intentCode == -1) {
+            toolbar.setTitle(R.string.add_alarm);
+        } else {
+            toolbar.setTitle(R.string.edit_alarm);
+            Bundle bundle = intent.getBundleExtra(AlarmContract.AlarmEntry.INTENT_BUNDLE);
+            String time = bundle.getString(AlarmContract.AlarmEntry.TIME);
+            String hour = time.substring(0, 2);
+            String min = time.substring(3, 5);
+            setToGivenTime(hour, min);
 
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    RecyclerView.ViewHolder minViewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
-                    RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(minutePosition + 2);
+        }
 
-                    TextView h = viewHolder.itemView.findViewById(R.id.number_list);
-                    TextView m = minViewHolder.itemView.findViewById(R.id.number_list);
-
-
-                    int hour = Integer.parseInt(h.getText().toString());
-                    int min = Integer.parseInt(m.getText().toString());
-
-
-                    Data data = new Data.Builder()
-                            .putInt(HOUR, hour)
-                            .putInt(MIN, min)
-                            .putInt(AlarmContract.AlarmEntry.PENDING, 1)
-                            .build();
-//                    uniqueWork++;
-                    Data data2 = new Data.Builder()
-                            .putInt(HOUR, hour)
-                            .putInt(MIN, min + 1)
-                            .putInt(AlarmContract.AlarmEntry.PENDING, 2)
-                            .build();
-                    Data data3 = new Data.Builder()
-                            .putInt(HOUR, hour)
-                            .putInt(MIN, min + 2)
-                            .putInt(AlarmContract.AlarmEntry.PENDING, 3)
-                            .build();
-//
-
-//                    WorkRequest workRequest = new PeriodicWorkRequest.Builder(MyWork.class).setInputData(data).build();
-//                    WorkRequest w = new PeriodicWorkRequest.Builder(MyWork.class).build();
-//                    String uni = Integer.toString(uniqueWork);
-//                    workManager.enqueueUniquePeriodicWork(uni, ExistingPeriodicWorkPolicy.KEEP, workRequest);
-
-//                    PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(MyWork.class, 10, TimeUnit.SECONDS).setInputData(data).build();
-//                    workManager.enqueueUniquePeriodicWork("work", ExistingPeriodicWorkPolicy.KEEP, workRequest);
-
-                    OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
-                    OneTimeWorkRequest workRequest2 = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data2).build();
-                    OneTimeWorkRequest workRequest3 = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data3).build();
-//                    workManager.enqueueUniqueWork("work" + uniqueWork, ExistingWorkPolicy.APPEND, workRequest2);
-                    workManager.beginWith(Arrays.asList(workRequest, workRequest2, workRequest3)).enqueue();
-
-
-//                    workManager.enqueue(workRequest);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    Toast.makeText(NewAlarmActivity.this, "Alarm set", Toast.LENGTH_SHORT).show();
-                    finish();
-
-                }
-            }
-        });
 
 
         addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 RecyclerView.ViewHolder minViewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
                 RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(minutePosition + 2);
 
@@ -221,8 +185,15 @@ public class NewAlarmActivity extends AppCompatActivity {
                 contentValues.put(AlarmContract.AlarmEntry.TIME, Integer.parseInt(hour + min));
 
 
-                Uri uri = getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
-                int id = (int) ContentUris.parseId(uri);
+                if (intentCode == -1) {
+
+                    Uri uri = getContentResolver().insert(AlarmContract.AlarmEntry.CONTENT_URI, contentValues);
+                    id = (int) ContentUris.parseId(uri);
+                } else {
+                    id = (int) intent.getLongExtra(AlarmContract.AlarmEntry._ID, -1);
+                    Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
+                    getContentResolver().update(uri, contentValues, null, null);
+                }
                 Data data = new Data.Builder()
                         .putInt(HOUR, Integer.parseInt(hour))
                         .putInt(MIN, Integer.parseInt(min))
@@ -240,15 +211,15 @@ public class NewAlarmActivity extends AppCompatActivity {
                 OneTimeWorkRequest oneTimeWorkRequest;
                 if (calendarTime < currentTime) {
                     oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                            .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY , TimeUnit.MILLISECONDS).build();
+                            .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
 
                 } else {
                     oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                            .setInputData(data).setInitialDelay(calendarTime - currentTime , TimeUnit.MILLISECONDS).build();
+                            .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
 
                 }
 //                OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
-                workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+                workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
 
 //                Calendar calendar = Calendar.getInstance();
 //                calendar.setTimeInMillis(System.currentTimeMillis());
@@ -257,6 +228,7 @@ public class NewAlarmActivity extends AppCompatActivity {
                 AlarmUtils.showMessage(NewAlarmActivity.this, calendar);
                 finish();
             }
+
         });
 
     }
@@ -265,7 +237,10 @@ public class NewAlarmActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setToCurrentTime();
+        if (intentCode == -1) {
+
+            setToCurrentTime();
+        }
     }
 
     private void setToCurrentTime() {
@@ -306,6 +281,33 @@ public class NewAlarmActivity extends AppCompatActivity {
             }
             i++;
         }
+    }
+
+    private void setToGivenTime(String hour, String min) {
+
+        int i = SCROLL;
+        while (true) {
+
+            String listitem = hoursList.get(i % hoursList.size());
+            if (listitem.equals(hour)) {
+                hoursRecyclerView.scrollToPosition(i);
+                hoursRecyclerView.scrollToPosition(i - 2);
+                break;
+            }
+            i++;
+        }
+        i = SCROLL;
+        while (true) {
+
+            String listitem = minutesList.get(i % minutesList.size());
+            if (listitem.equals(min)) {
+                minutesRecyclerView.scrollToPosition(i);
+                minutesRecyclerView.scrollToPosition(i - 2);
+                break;
+            }
+            i++;
+        }
+
     }
 
 }

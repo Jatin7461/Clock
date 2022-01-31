@@ -3,25 +3,27 @@ package com.example.clock;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 //import androidx.loader.app.LoaderManager.LoaderCallbacks;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.clock.Adapters.AlarmAdapter;
 import com.example.clock.Adapters.AlarmCursorAdapter;
@@ -29,8 +31,6 @@ import com.example.clock.Fragments.AlarmFragment;
 import com.example.clock.Fragments.StopwatchFragment;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private AlarmCursorAdapter adapter;
     private RecyclerView recyclerView;
     private AlarmAdapter recyclerAdapter;
+    private Toolbar toolbar;
+    private static final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,20 +54,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mAlarmFragment = new AlarmFragment();
         mStopwatchFragment = new StopwatchFragment();
 
+        toolbar = findViewById(R.id.toolbar_add_alarm);
         newAlarm = findViewById(R.id.new_alarm);
         AlarmButton = findViewById(R.id.alarm_button);
         StopwatchButton = findViewById(R.id.stopwatch_button);
         TimerButton = findViewById(R.id.timer_button);
 
-        recyclerView = findViewById(R.id.alarm_list);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerAdapter = new AlarmAdapter(this);
-        recyclerView.setAdapter(recyclerAdapter);
+//        recyclerView = findViewById(R.id.alarm_list);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerAdapter = new AlarmAdapter(this);
+////        recyclerView.setAdapter(recyclerAdapter);
 
-//        listView = findViewById(R.id.list_of_alarms);
-//        adapter = new AlarmCursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-//        listView.setAdapter(adapter);
+        listView = findViewById(R.id.list_of_alarms);
+        adapter = new AlarmCursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        listView.setAdapter(adapter);
 
 
         AlarmButton.setOnClickListener(new View.OnClickListener() {
@@ -73,14 +76,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mAlarmFragment).commit();
                 newAlarm.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.VISIBLE);
+                toolbar.setTitle(R.string.alarm);
             }
         });
         StopwatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mStopwatchFragment).commit();
-
+                listView.setVisibility(View.GONE);
                 newAlarm.setVisibility(View.GONE);
+                toolbar.setTitle(R.string.stopwatch);
             }
         });
 
@@ -92,9 +98,50 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
+                        R.anim.bottom_up);
+                LinearLayout layout = findViewById(R.id.linearLayout);
+                layout.startAnimation(slide_up);
+                layout.setVisibility(View.VISIBLE);
+
+                Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bottom_down);
+                LinearLayout transparent = findViewById(R.id.transparent_screen);
+                transparent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        layout.startAnimation(slide_down);
+                        transparent.setVisibility(View.GONE);
+                        layout.setVisibility(View.INVISIBLE);
+                    }
+                });
+                transparent.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, NewAlarmActivity.class);
+                Bundle bundle = new Bundle();
+                TextView t = view.findViewById(R.id.alarm_time);
+                String time = t.getText().toString();
+
+                bundle.putString(AlarmEntry.TIME, time);
+                intent.putExtra(AlarmEntry._ID, l);
+                intent.putExtra(AlarmEntry.INTENT_BUNDLE, bundle);
+                intent.putExtra(AlarmEntry.EDIT_ALARM, 100);
+
+                startActivity(intent);
+            }
+        });
+
 
         LoaderManager.getInstance(this).initLoader(1, null, this);
-//        getSupportLoaderManager().initLoader(1,null,this);
+
 
     }
 
@@ -104,51 +151,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         String projection[] = {AlarmEntry._ID, AlarmEntry.TIME, AlarmEntry.HOUR, AlarmEntry.MIN, AlarmEntry.ACTIVE};
         CursorLoader cursorLoader = new CursorLoader(this, AlarmEntry.CONTENT_URI, projection, null, null, AlarmEntry.TIME);
-
         return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-//        Toast.makeText(MainActivity.this, "data changed", Toast.LENGTH_SHORT).show();
         if (data.getCount() == 0) {
             return;
         }
-
-//        data.moveToFirst();
-//        ArrayList<OneTimeWorkRequest> alarm = new ArrayList<>();
-//        do {
-//            int hourId = data.getColumnIndex(AlarmEntry.HOUR);
-//            int hour = Integer.parseInt(data.getString(hourId));
-//
-//
-//            int minId = data.getColumnIndex(AlarmEntry.MIN);
-//            int min = Integer.parseInt(data.getString(minId));
-//
-//            int activeId = data.getColumnIndex(AlarmEntry.ACTIVE);
-//            int active = data.getInt(activeId);
-//
-//            int alarmId = data.getColumnIndex(AlarmEntry._ID);
-//            int id = data.getInt(alarmId);
-//
-//
-//            Data alarmData = new Data.Builder()
-//                    .putInt(AlarmEntry.HOUR, hour)
-//                    .putInt(AlarmEntry.MIN, min)
-//                    .putInt(AlarmEntry.PENDING, id).build();
-//
-//            OneTimeWorkRequest workRequest;
-//            if (active == AlarmEntry.ALARM_ACTIVE) {
-//                workRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(alarmData).build();
-//                alarm.add(workRequest);
-//            }
-//
-//        }
-//        while (data.moveToNext());
-//
-//        WorkManager workManager = WorkManager.getInstance(this);
-//        workManager.beginWith(alarm).enqueue();
-        recyclerAdapter.swapCursor(data);
+        adapter.swapCursor(data);
     }
 
     @Override

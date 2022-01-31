@@ -23,6 +23,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -145,6 +146,13 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 //        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
 //        manager.notify(1, build.build());
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 30000);
 
     }
 

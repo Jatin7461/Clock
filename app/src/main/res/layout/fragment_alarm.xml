@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.AlarmFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/alarm_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:title="@string/alarm"
-        app:layout_constraintTop_toTopOf="parent">
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/alarm_toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:title="@string/alarm"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
 
 
 <!--        <TextView-->
@@ -24,7 +24,7 @@
 <!--            android:textColor="@color/black"-->
 <!--            android:textSize="20sp"-->
 <!--            android:textStyle="bold" />-->
-    </androidx.appcompat.widget.Toolbar>
+<!--    </androidx.appcompat.widget.Toolbar>-->
 
 <!--    <FrameLayout-->
 <!--        android:id="@+id/frameLayout2"-->

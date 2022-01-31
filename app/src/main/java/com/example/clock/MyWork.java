@@ -55,19 +55,10 @@ public class MyWork extends Worker {
             Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), code, intent, 0);
 
-            long currentTime = System.currentTimeMillis();
-//            if (calendar.getTimeInMillis() < currentTime) {
-//
-//                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DAY, pendingIntent);
-////                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + DAY, pendingIntent);
-//            } else {
-//
-//                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
-//
-//
-////                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-//            }
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
+
+//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
             ContentValues contentValues = new ContentValues();
             contentValues.put(AlarmContract.AlarmEntry.ACTIVE, 0);
 

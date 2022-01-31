@@ -73,52 +73,54 @@ public class AlarmCursorAdapter extends CursorAdapter {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (compoundButton.isShown()) {
 
 
-                Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
-                if (b) {
+                    Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
+                    if (b) {
 //                    Toast.makeText(context, "yes", Toast.LENGTH_SHORT).show();
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
-                    context.getContentResolver().update(uri, contentValues, null, null);
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
+                        context.getContentResolver().update(uri, contentValues, null, null);
 
-                    Data data = new Data.Builder()
-                            .putInt(AlarmContract.AlarmEntry.HOUR, Integer.parseInt(hour))
-                            .putInt(AlarmContract.AlarmEntry.MIN, Integer.parseInt(min))
-                            .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
+                        Data data = new Data.Builder()
+                                .putInt(AlarmContract.AlarmEntry.HOUR, Integer.parseInt(hour))
+                                .putInt(AlarmContract.AlarmEntry.MIN, Integer.parseInt(min))
+                                .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
 
 
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-                    calendar.set(Calendar.MINUTE, Integer.parseInt(min));
-                    calendar.set(Calendar.SECOND, 0);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                        calendar.set(Calendar.MINUTE, Integer.parseInt(min));
+                        calendar.set(Calendar.SECOND, 0);
 
-                    long currentTime = System.currentTimeMillis();
-                    long calendarTime = calendar.getTimeInMillis();
-                    OneTimeWorkRequest oneTimeWorkRequest;
-                    if (calendarTime < currentTime) {
-                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                                .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
+                        long currentTime = System.currentTimeMillis();
+                        long calendarTime = calendar.getTimeInMillis();
+                        OneTimeWorkRequest oneTimeWorkRequest;
+                        if (calendarTime < currentTime) {
+                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+                                    .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
 
-                    } else {
-                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                                .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
+                        } else {
+                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+                                    .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
 
-                    }
+                        }
 //                    OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
 //                            .setInitialDelay(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS).setInputData(data).build();
-                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+                        workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
 //                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
 
-                } else {
+                    } else {
 
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
-                    context.getContentResolver().update(uri, contentValues, null, null);
-                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
+                        context.getContentResolver().update(uri, contentValues, null, null);
+                        workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
 
 //                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
 
+                    }
                 }
             }
         });

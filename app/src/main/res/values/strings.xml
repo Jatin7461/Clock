@@ -9,5 +9,8 @@
     <string name="count">Count</string>
     <string name="stopwatch_time">00:00:00:00</string>
     <string name="add_alarm">Add Alarm</string>
+    <string name="edit_alarm">Edit Alarm</string>
     <string name="alarm">Alarm</string>
+    <string name="stopwatch">Stopwatch</string>
+    <string name="timer">Timer</string>
 </resources>

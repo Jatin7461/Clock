@@ -22,6 +22,7 @@ import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.loader.app.LoaderManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Configuration;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -36,6 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
@@ -50,6 +52,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
     public AlarmAdapter(Context context) {
         this.context = context;
+//        workManager = WorkManager.getInstance(context);
+
         workManager = WorkManager.getInstance(context);
 //        this.onAlarmClickListener = onAlarmClickListener;
     }
@@ -97,67 +101,69 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         holder.alarmSwitch.setChecked(b);
 
         holder.id = id;
+        holder.hour = Integer.parseInt(hour);
+        holder.min = Integer.parseInt(min);
+        holder.holderPosition = holder.getAdapterPosition();
 
-
-        holder.alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (compoundButton.isShown()) {
-                    Toast.makeText(context, "clicked for id " + id, Toast.LENGTH_SHORT).show();
-
-
-                    Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
-                    if (b) {
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
-                        context.getContentResolver().update(uri, contentValues, null, null);
-
-                        Data data = new Data.Builder()
-                                .putInt(AlarmContract.AlarmEntry.HOUR, Integer.parseInt(hour))
-                                .putInt(AlarmContract.AlarmEntry.MIN, Integer.parseInt(min))
-                                .putInt("position",holder.getAdapterPosition())
-                                .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
-
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-                        calendar.set(Calendar.MINUTE, Integer.parseInt(min));
-                        calendar.set(Calendar.SECOND, 0);
-
-                        long currentTime = System.currentTimeMillis();
-                        long calendarTime = calendar.getTimeInMillis();
-                        OneTimeWorkRequest oneTimeWorkRequest;
-                        if (calendarTime < currentTime) {
-                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                                    .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
-
-                        } else {
-                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                                    .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
-
-                        }
-//                    OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-//                            .setInitialDelay(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS).setInputData(data).build();
-                        workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
-//                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
-
-                    } else {
-
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
-                        context.getContentResolver().update(uri, contentValues, null, null);
-                        workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
-
-//                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
-
-                    }
-
-
-                }
-
-
-            }
-        });
+//        holder.alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                if (compoundButton.isShown()) {
+//                    Toast.makeText(context, "clicked for id " + id, Toast.LENGTH_SHORT).show();
+//
+//
+//                    Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
+//                    if (b) {
+//                        ContentValues contentValues = new ContentValues();
+//                        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
+//                        context.getContentResolver().update(uri, contentValues, null, null);
+//
+//                        Data data = new Data.Builder()
+//                                .putInt(AlarmContract.AlarmEntry.HOUR, Integer.parseInt(hour))
+//                                .putInt(AlarmContract.AlarmEntry.MIN, Integer.parseInt(min))
+//                                .putInt("position", holder.getAdapterPosition())
+//                                .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
+//
+//
+//                        Calendar calendar = Calendar.getInstance();
+//                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+//                        calendar.set(Calendar.MINUTE, Integer.parseInt(min));
+//                        calendar.set(Calendar.SECOND, 0);
+//
+//                        long currentTime = System.currentTimeMillis();
+//                        long calendarTime = calendar.getTimeInMillis();
+//                        OneTimeWorkRequest oneTimeWorkRequest;
+//                        if (calendarTime < currentTime) {
+//                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+//                                    .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
+//
+//                        } else {
+//                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+//                                    .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
+//
+//                        }
+////                    OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+////                            .setInitialDelay(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS).setInputData(data).build();
+//                        workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+////                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+//
+//                    } else {
+//
+//                        ContentValues contentValues = new ContentValues();
+//                        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
+//                        context.getContentResolver().update(uri, contentValues, null, null);
+//                        workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+//
+////                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+//
+//                    }
+//
+//
+//                }
+//
+//
+//            }
+//        });
 
 
     }
@@ -173,6 +179,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         public TextView alarmTime;
         public Switch alarmSwitch;
         public int id;
+        public int hour, min, holderPosition;
 
         public AlarmViewHolder(View view) {
             super(view);
@@ -190,18 +197,65 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 //            });
 
 
-//            alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                    if (compoundButton.isShown()) {
+            alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (compoundButton.isShown()) {
+                        Toast.makeText(context, "clicked for id " + id, Toast.LENGTH_SHORT).show();
+
+
+                        Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
+                        if (b) {
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
+                            context.getContentResolver().update(uri, contentValues, null, null);
+
+                            Data data = new Data.Builder()
+                                    .putInt(AlarmContract.AlarmEntry.HOUR, hour)
+                                    .putInt(AlarmContract.AlarmEntry.MIN, min)
+                                    .putInt("position", holderPosition)
+                                    .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
+
+
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(Calendar.HOUR_OF_DAY, hour);
+                            calendar.set(Calendar.MINUTE, min);
+                            calendar.set(Calendar.SECOND, 0);
+
+                            long currentTime = System.currentTimeMillis();
+                            long calendarTime = calendar.getTimeInMillis();
+                            OneTimeWorkRequest oneTimeWorkRequest;
+//                            if (calendarTime < currentTime) {
+//                                oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+//                                        .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
 //
-////                    Log.v("", "switch on for " + id);
-//                        Toast.makeText(context, "switch clicked for " + id, Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+//                                        .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
 //
-//                    }
-//
-//                }
-//            });
+//                            }
+                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
+//                    OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
+//                            .setInitialDelay(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS).setInputData(data).build();
+                            workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+//                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+
+                        } else {
+
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
+                            context.getContentResolver().update(uri, contentValues, null, null);
+                            workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+
+//                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+
+                        }
+
+
+                    }
+
+                }
+            });
 
 
         }

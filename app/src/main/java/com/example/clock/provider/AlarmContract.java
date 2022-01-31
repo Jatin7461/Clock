@@ -41,6 +41,8 @@ public class AlarmContract {
 
         public static final int ALARM_ACTIVE = 1;
         public static final int ALARM_INACTIVE = 0;
+        public static final String INTENT_BUNDLE = "bundle";
+        public static final String EDIT_ALARM = "edit";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_AUTHORITY, PATH_ALARMS);
     }
 }

@@ -64,9 +64,6 @@ public class AlarmUtils {
     }
 
 
-    public static void setAlarm(ContentValues contentValues, Data data) {
 
-
-    }
 
 }
