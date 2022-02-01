@@ -53,17 +53,18 @@ public class MyWork extends Worker {
             calendar.set(Calendar.MINUTE, min);
             calendar.set(Calendar.SECOND, 0);
             Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
+            intent.putExtra(AlarmContract.AlarmEntry._ID, code);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), code, intent, 0);
 
 
 //            alarmManager.setExact(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(AlarmContract.AlarmEntry.ACTIVE, 0);
-
-            Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, code);
-            getApplicationContext().getContentResolver().update(uri, contentValues, null, null);
+//            ContentValues contentValues = new ContentValues();
+//            contentValues.put(AlarmContract.AlarmEntry.ACTIVE, 0);
+//
+//            Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, code);
+//            getApplicationContext().getContentResolver().update(uri, contentValues, null, null);
 
 //            Toast.makeText(getApplicationContext(), "alarm set", Toast.LENGTH_SHORT).show();
 

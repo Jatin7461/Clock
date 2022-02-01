@@ -22,6 +22,7 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import com.example.clock.CancelAlarm;
 import com.example.clock.MyWork;
 import com.example.clock.R;
 import com.example.clock.provider.AlarmContract;
@@ -110,14 +111,19 @@ public class AlarmCursorAdapter extends CursorAdapter {
 //                            .setInitialDelay(calendar.getTimeInMillis(), TimeUnit.MILLISECONDS).setInputData(data).build();
                         workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
 //                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
+                        AlarmUtils.showMessage(context, calendar);
 
                     } else {
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
                         context.getContentResolver().update(uri, contentValues, null, null);
-                        workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
-
+//                        workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+                        Data data = new Data.Builder()
+                                .putInt(AlarmContract.AlarmEntry._ID, id)
+                                .build();
+                        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(CancelAlarm.class).setInputData(data).build();
+                        workManager.enqueue(oneTimeWorkRequest);
 //                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
 
                     }

@@ -40,7 +40,12 @@ public class AlarmUtils {
 
         String time = "";
         if (days != 0) {
-            time += days + " days ";
+            if (days == 1) {
+                time += days + " day";
+            } else {
+                time += days + " days ";
+
+            }
         }
 
         if (hours != 0) {
@@ -52,7 +57,7 @@ public class AlarmUtils {
         }
         if (minutes != 0) {
             if (minutes == 1) {
-                time += minutes + "minute";
+                time += minutes + " minute";
             } else {
                 time += minutes + " minutes";
             }
@@ -62,8 +67,6 @@ public class AlarmUtils {
 
         return time;
     }
-
-
 
 
 }

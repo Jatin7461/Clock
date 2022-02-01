@@ -15,6 +15,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -35,6 +37,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.clock.Fragments.SwipeAlarm;
+import com.example.clock.provider.AlarmContract;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -90,6 +93,8 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         ConstraintLayout layout = (ConstraintLayout) findViewById(R.id.alarm);
         layout.setOnTouchListener(this);
 
+        Intent intent = getIntent();
+        int code = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
 
 //        OnSwipeTouchListener onSwipeTouchListener = new OnSwipeTouchListener(this, layout);
 
@@ -145,11 +150,19 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 //
 //        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
 //        manager.notify(1, build.build());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, 0);
+        if (code != -1) {
+
+            Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, code);
+            getApplicationContext().getContentResolver().update(uri, contentValues, null, null);
+        }
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 finish();
             }
         }, 30000);

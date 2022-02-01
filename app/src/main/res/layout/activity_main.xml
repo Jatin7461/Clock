@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_add_alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/alarm" />
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/toolbar_add_alarm"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:title="@string/alarm" />-->
 
     <FrameLayout
         android:id="@+id/fragment"
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toTopOf="@+id/stopwatch_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_add_alarm" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--    <androidx.recyclerview.widget.RecyclerView-->
     <!--        android:id="@+id/alarm_list"-->
@@ -62,19 +62,21 @@
         android:id="@+id/transparent_screen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#33000000"
+        android:clickable="true"
         android:elevation="3dp"
         android:orientation="vertical"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar_add_alarm" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="3dp"
+        android:elevation="6dp"
         android:orientation="vertical"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -85,12 +87,18 @@
             android:id="@+id/slide_up"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:background="@color/black"
+            android:background="@color/purple_200"
+            android:gravity="center"
+            android:text="7:00"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:visibility="visible" />
 
         <Button
+            android:id="@+id/delete_button"
             android:layout_width="match_parent"
             android:layout_height="64dp"
+            android:background="@color/black"
             android:text="delete" />
     </LinearLayout>
 

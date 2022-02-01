@@ -10,10 +10,19 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 //import androidx.loader.app.LoaderManager.LoaderCallbacks;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +33,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.clock.Adapters.AlarmAdapter;
 import com.example.clock.Adapters.AlarmCursorAdapter;
@@ -48,13 +58,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.O_MR1){
+//
+//        }
+        getSupportActionBar().setTitle(R.string.alarm);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment, AlarmFragment.class, null)
                 .commit();
         mAlarmFragment = new AlarmFragment();
         mStopwatchFragment = new StopwatchFragment();
 
-        toolbar = findViewById(R.id.toolbar_add_alarm);
+
         newAlarm = findViewById(R.id.new_alarm);
         AlarmButton = findViewById(R.id.alarm_button);
         StopwatchButton = findViewById(R.id.stopwatch_button);
@@ -75,18 +89,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mAlarmFragment).commit();
+                getSupportActionBar().setTitle(R.string.alarm);
                 newAlarm.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.VISIBLE);
-                toolbar.setTitle(R.string.alarm);
+
             }
         });
         StopwatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mStopwatchFragment).commit();
+                getSupportActionBar().setTitle(R.string.stopwatch);
                 listView.setVisibility(View.GONE);
                 newAlarm.setVisibility(View.GONE);
-                toolbar.setTitle(R.string.stopwatch);
+
             }
         });
 
@@ -110,6 +126,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bottom_down);
                 LinearLayout transparent = findViewById(R.id.transparent_screen);
+
+
+                Button button = findViewById(R.id.delete_button);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, l);
+                        int id = (int) l;
+                        Data data = new Data.Builder()
+                                .putInt(AlarmEntry._ID, id).build();
+                        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(CancelAlarm.class).setInputData(data).build();
+
+                        WorkManager.getInstance(MainActivity.this).enqueue(oneTimeWorkRequest);
+                        getContentResolver().delete(uri, null, null);
+                        transparent.setVisibility(View.VISIBLE);
+
+                    }
+                });
+
                 transparent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -149,7 +185,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        String projection[] = {AlarmEntry._ID, AlarmEntry.TIME, AlarmEntry.HOUR, AlarmEntry.MIN, AlarmEntry.ACTIVE};
+        String projection[] = {AlarmEntry._ID, AlarmEntry.TIME, AlarmEntry.HOUR, AlarmEntry.MIN, AlarmEntry.ACTIVE, AlarmEntry.SUNDAY,
+                AlarmEntry.MONDAY, AlarmEntry.TUESDAY, AlarmEntry.WEDNESDAY, AlarmEntry.THURSDAY, AlarmEntry.FRIDAY, AlarmEntry.SATURDAY};
         CursorLoader cursorLoader = new CursorLoader(this, AlarmEntry.CONTENT_URI, projection, null, null, AlarmEntry.TIME);
         return cursorLoader;
     }

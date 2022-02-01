@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class AlarmDB extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "Alarm.db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
 
     public AlarmDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

@@ -13,29 +13,6 @@
 
         >
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_add_alarm"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/add_alarm"
-            app:titleTextColor="@color/white">
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/toolbar_title"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_gravity="center"-->
-            <!--                android:text="@string/add_alarm"-->
-            <!--                android:textColor="@color/black"-->
-            <!--                android:textSize="16sp"-->
-            <!--                android:textStyle="bold" />-->
-
-        </androidx.appcompat.widget.Toolbar>
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/hours_list"
@@ -49,7 +26,7 @@
             app:layout_constraintEnd_toStartOf="@+id/minutes_list"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_add_alarm" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/minutes_list"
@@ -61,7 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/hours_list"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_add_alarm" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
@@ -74,28 +51,153 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/minutes_list">
 
-
-            <Button
-                android:id="@+id/set_alarm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/sunday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/adding_alarm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="done"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.467"
+                app:layout_constraintEnd_toStartOf="@+id/monday"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.249" />
+
+                app:layout_constraintVertical_bias="0.1" />
+
+            <TextView
+                android:id="@+id/text_sunday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="6dp"
+                android:text="@string/sunday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/sunday"
+                app:layout_constraintEnd_toEndOf="@+id/sunday"
+                app:layout_constraintStart_toStartOf="@+id/sunday"
+                app:layout_constraintTop_toTopOf="@+id/sunday" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/saturday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/friday"
+                app:layout_constraintTop_toTopOf="@+id/friday" />
+            <TextView
+                android:id="@+id/text_monday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="7dp"
+                android:text="@string/monday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/monday"
+                app:layout_constraintEnd_toEndOf="@+id/monday"
+                app:layout_constraintStart_toStartOf="@+id/monday"
+                app:layout_constraintTop_toTopOf="@+id/monday" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/wednesday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintEnd_toStartOf="@+id/thursday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tuesday"
+                app:layout_constraintTop_toTopOf="@+id/tuesday" />
+            <TextView
+                android:id="@+id/text_tuesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="7dp"
+                android:text="@string/tuesday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tuesday"
+                app:layout_constraintEnd_toEndOf="@+id/tuesday"
+                app:layout_constraintStart_toStartOf="@+id/tuesday"
+                app:layout_constraintTop_toTopOf="@+id/tuesday" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/tuesday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintEnd_toStartOf="@+id/wednesday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/monday"
+                app:layout_constraintTop_toTopOf="@+id/monday" />
+            <TextView
+                android:id="@+id/text_wednesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="6dp"
+                android:text="@string/wednesday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/wednesday"
+                app:layout_constraintEnd_toEndOf="@+id/wednesday"
+                app:layout_constraintStart_toStartOf="@+id/wednesday"
+                app:layout_constraintTop_toTopOf="@+id/wednesday" />
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/friday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintEnd_toStartOf="@+id/saturday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/thursday"
+                app:layout_constraintTop_toTopOf="@+id/thursday" />
+            <TextView
+                android:id="@+id/text_thursday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="7dp"
+                android:text="@string/thursday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/thursday"
+                app:layout_constraintEnd_toEndOf="@+id/thursday"
+                app:layout_constraintStart_toStartOf="@+id/thursday"
+                app:layout_constraintTop_toTopOf="@+id/thursday" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/monday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintEnd_toStartOf="@+id/tuesday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/sunday"
+                app:layout_constraintTop_toTopOf="@+id/sunday" />
+
+            <TextView
+                android:id="@+id/text_friday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="7dp"
+                android:text="@string/friday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/friday"
+                app:layout_constraintEnd_toEndOf="@+id/friday"
+                app:layout_constraintStart_toStartOf="@+id/friday"
+                app:layout_constraintTop_toTopOf="@+id/friday" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/thursday"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:layout_constraintEnd_toStartOf="@+id/friday"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/wednesday"
+                app:layout_constraintTop_toTopOf="@+id/wednesday" />
+
+            <TextView
+                android:id="@+id/text_saturday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="7dp"
+                android:text="@string/saturday"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@+id/saturday"
+                app:layout_constraintEnd_toEndOf="@+id/saturday"
+                app:layout_constraintStart_toStartOf="@+id/saturday"
+                app:layout_constraintTop_toTopOf="@+id/saturday" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
