@@ -45,6 +45,12 @@ public class AlarmProvider extends ContentProvider {
             case ALARM:
                 cursor = db.query(AlarmContract.AlarmEntry.TABLE_NAME, strings, s, strings1, null, null, s1);
                 break;
+            case ALARM_ID:
+                String selection = AlarmContract.AlarmEntry._ID + "=?";
+                String selectionargs[] = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = db.query(AlarmContract.AlarmEntry.TABLE_NAME, strings, selection, selectionargs, null, null, s1);
+                break;
+
             default:
                 throw new IllegalArgumentException("wrong uri");
 

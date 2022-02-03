@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import androidx.work.Data;
 
+import com.example.clock.R;
+
 import java.util.Calendar;
 
 public class AlarmUtils {
@@ -24,9 +26,24 @@ public class AlarmUtils {
             remainingTime = calendarTime - currentTime;
         }
         time = calculateTime(remainingTime);
-        Toast.makeText(context, "Alarm will remind in " + time, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getResources().getString(R.string.alarm_message) + " " + time, Toast.LENGTH_SHORT).show();
 
 
+    }
+
+    public static void repeatingAlarmMessage(Context context, Calendar calendar) {
+        long currentTime = System.currentTimeMillis();
+        long calendarTime = calendar.getTimeInMillis();
+        String time;
+        long remainingTime;
+        if (currentTime > calendarTime) {
+            remainingTime = calendarTime - currentTime + DAY * 7;
+        } else {
+            remainingTime = calendarTime - currentTime;
+        }
+
+        time = calculateTime(remainingTime);
+        Toast.makeText(context, context.getResources().getString(R.string.alarm_message) + " " + time, Toast.LENGTH_SHORT).show();
     }
 
     private static String calculateTime(long remainingTime) {
@@ -41,28 +58,27 @@ public class AlarmUtils {
         String time = "";
         if (days != 0) {
             if (days == 1) {
-                time += days + " day";
+                time += days + " day ";
             } else {
                 time += days + " days ";
-
             }
         }
 
         if (hours != 0) {
             if (hours == 1) {
-                time += hours + " hour";
+                time += hours + " hour ";
             } else {
                 time += hours + " hours ";
             }
         }
         if (minutes != 0) {
             if (minutes == 1) {
-                time += minutes + " minute";
+                time += minutes + " minute ";
             } else {
-                time += minutes + " minutes";
+                time += minutes + " minutes ";
             }
         } else if (days == 0 && hours == 0 && minutes == 0) {
-            time += "less than a minute";
+            time += " less than a minute ";
         }
 
         return time;

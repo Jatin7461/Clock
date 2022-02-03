@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +41,8 @@ public class MyWork extends Worker {
 
         try {
 
-            int hour = getInputData().getInt("hour", -1);
-            int min = getInputData().getInt("min", -1);
+            int hour = getInputData().getInt(AlarmContract.AlarmEntry.HOUR, -1);
+            int min = getInputData().getInt(AlarmContract.AlarmEntry.MIN, -1);
             if (hour == -1 || min == -1) {
                 Toast.makeText(getApplicationContext(), "invalid time", Toast.LENGTH_SHORT).show();
                 Result.failure();
@@ -54,11 +55,16 @@ public class MyWork extends Worker {
             calendar.set(Calendar.SECOND, 0);
             Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
             intent.putExtra(AlarmContract.AlarmEntry._ID, code);
+            intent.putExtra(AlarmContract.AlarmEntry.HOUR, hour);
+            intent.putExtra(AlarmContract.AlarmEntry.MIN, min);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), code, intent, 0);
 
 
 //            alarmManager.setExact(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            if (System.currentTimeMillis() > calendar.getTimeInMillis())
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + DAY, pendingIntent);
+            else
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
 //            ContentValues contentValues = new ContentValues();
 //            contentValues.put(AlarmContract.AlarmEntry.ACTIVE, 0);

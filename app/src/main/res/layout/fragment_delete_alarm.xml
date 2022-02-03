@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
-    tools:context=".Fragments.DeleteAlarmFragment">
+    android:background="#33000000"
 
+    tools:context=".Fragments.DeleteAlarmFragment">
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
