@@ -2,6 +2,9 @@ package com.example.clock.Adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +16,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clock.R;
 
+import java.util.List;
+import java.util.Map;
+
 public class RingtoneAdapter extends RecyclerView.Adapter<RingtoneAdapter.RingtoneViewHolder> {
 
 
-    Cursor cursor;
+    List<String> list;
+    Map<String, String> map;
 
-    public RingtoneAdapter(Context context) {
-
+    public RingtoneAdapter(Context context, List<String> list, Map<String, String> map) {
+        this.list = list;
+        this.map = map;
     }
 
     @NonNull
@@ -34,14 +42,15 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RingtoneAdapter.Ringto
 
     @Override
     public void onBindViewHolder(@NonNull RingtoneViewHolder holder, int position) {
-        cursor.moveToPosition(position);
 
+
+        holder.ringtoneName.setText(list.get(position));
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     public class RingtoneViewHolder extends RecyclerView.ViewHolder {
@@ -53,6 +62,8 @@ public class RingtoneAdapter extends RecyclerView.Adapter<RingtoneAdapter.Ringto
             ringtoneName = view.findViewById(R.id.ringtone_name);
         }
 
+
     }
+
 
 }

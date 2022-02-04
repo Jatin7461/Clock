@@ -10,10 +10,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
+
 //import androidx.loader.app.LoaderManager.LoaderCallbacks;
 
 import android.animation.ArgbEvaluator;
@@ -37,7 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.clock.Adapters.AlarmAdapter;
+//import com.example.clock.Adapters.AlarmAdapter;
 import com.example.clock.Adapters.AlarmCursorAdapter;
 import com.example.clock.Fragments.AlarmFragment;
 import com.example.clock.Fragments.DeleteAlarmFragment;
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ListView listView;
     private AlarmCursorAdapter adapter;
     private RecyclerView recyclerView;
-    private AlarmAdapter recyclerAdapter;
+//    private AlarmAdapter recyclerAdapter;
     private Toolbar toolbar;
     private static final String TAG = MainActivity.class.getName();
     String manufacturer = Build.MANUFACTURER;
@@ -63,9 +60,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent();
-//        if ("vivo".equalsIgnoreCase(manufacturer)) {
-//            intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-//        }
+    //        if ("vivo".equalsIgnoreCase(manufacturer)) {
+    //            intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+    //        }
         setContentView(R.layout.activity_main);
 //        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.O_MR1){
 //
@@ -129,17 +126,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 frameLayout.setVisibility(View.VISIBLE);
 
-                Toast.makeText(MainActivity.this, "yes", Toast.LENGTH_SHORT).show();
                 Fragment deleteFragment = new DeleteAlarmFragment();
-                getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                        .add(R.id.extra_options, deleteFragment).commit();
-                frameLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        getSupportFragmentManager().beginTransaction().remove(deleteFragment).commit();
-                        frameLayout.setVisibility(View.INVISIBLE);
-                    }
-                });
+                Bundle bundle = new Bundle();
+                bundle.putLong(AlarmEntry._ID, l);
+                deleteFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                        android.R.animator.fade_in, android.R.animator.fade_out)
+                        .add(R.id.extra_options, deleteFragment).addToBackStack("deleteOption").commit();
+//                frameLayout.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in)
+//                                .remove(deleteFragment).commit();
+//                        getSupportFragmentManager().popBackStack();
+//                        frameLayout.setVisibility(View.INVISIBLE);
+//                    }
+//                });
 //                Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
 //                        R.anim.bottom_up);
 //                LinearLayout layout = findViewById(R.id.linearLayout);
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        recyclerAdapter.swapCursor(null);
+//        recyclerAdapter.swapCursor(null);
     }
 
 

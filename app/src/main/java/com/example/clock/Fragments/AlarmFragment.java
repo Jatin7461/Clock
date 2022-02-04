@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.example.clock.MyWork;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 
 import androidx.annotation.NonNull;
@@ -19,10 +18,7 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
+
 
 import android.util.Log;
 import android.view.ContextMenu;
@@ -40,7 +36,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.clock.Adapters.AlarmAdapter;
 import com.example.clock.Adapters.AlarmCursorAdapter;
 import com.example.clock.NewAlarmActivity;
 import com.example.clock.R;
@@ -56,7 +51,7 @@ public class AlarmFragment extends Fragment{
     private FloatingActionButton addAlarm;
     //    private RecyclerView recyclerView;
     private ListView listView;
-    private AlarmAdapter adapter;
+//    private AlarmAdapter adapter;
     private ArrayList<String> list;
     private AlarmCursorAdapter cursorAdapter;
     private TextView hiddenPanel;

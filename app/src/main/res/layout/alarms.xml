@@ -3,17 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="92dp">
 
 
     <TextView
         android:id="@+id/alarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-light"
         android:text="TextView"
-        android:textSize="64sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="44sp"
+
+        app:layout_constraintBottom_toTopOf="@+id/alarm_days"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,8 +23,11 @@
         android:id="@+id/alarm_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:focusable="false"
+        android:scaleX="1.8"
+        android:scaleY="1.8"
+        android:switchMinWidth="52dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +36,10 @@
         android:id="@+id/alarm_days"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:layout_marginBottom="2dp"
+        android:fontFamily="sans-serif-light"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/alarm_time"
         app:layout_constraintTop_toBottomOf="@+id/alarm_time" />
 </androidx.constraintlayout.widget.ConstraintLayout>

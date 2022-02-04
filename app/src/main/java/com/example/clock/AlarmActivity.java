@@ -13,6 +13,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
@@ -21,6 +22,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -46,6 +49,7 @@ import org.w3c.dom.Text;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public class AlarmActivity extends AppCompatActivity implements View.OnTouchListener {
 
@@ -101,17 +105,17 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         layout.setOnTouchListener(this);
 
         Intent intent = getIntent();
-        Log.v(TAG, intent.toString());
+
         int code = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
         boolean multiple = intent.getBooleanExtra("multiple", false);
-        int requestCode = intent.getIntExtra("code", -1);
-//        int hour = intent.getIntExtra(AlarmContract.AlarmEntry.HOUR, -1);
-//        int min = intent.getIntExtra(AlarmContract.AlarmEntry.MIN, -1);
+        int id = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
+        int requestCode = intent.getIntExtra(AlarmContract.AlarmEntry.REQUEST_CODE, -1);
+        int hour = intent.getIntExtra(AlarmContract.AlarmEntry.HOUR, -1);
+        int min = intent.getIntExtra(AlarmContract.AlarmEntry.MIN, -1);
 
         Calendar calendar1 = Calendar.getInstance();
         int dayNumber = calendar1.get(Calendar.DAY_OF_WEEK);
-        int hour = calendar1.get(Calendar.HOUR_OF_DAY);
-        int min = calendar1.get(Calendar.MINUTE);
+
         date = findViewById(R.id.date);
         //set today's date
         setDate();
@@ -173,25 +177,25 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         }
 
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.FLAG_AUDIBILITY_ENFORCED).build();
+        r.setAudioAttributes(audioAttributes);
         r.play();
 
-//        Intent i = new Intent(ALARM_SERVICE);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
-//                .setSmallIcon(R.drawable.ic_launcher_background)
-//                .setContentTitle("alarm")
-//                .setContentText("alarm")
+        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("alarm")
+                .setContentText("alarm")
 //                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher_background))
-//                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
 //                .setVibrate(new long[]{1000, 1000, 1000, 1000})
-//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-//                .setFullScreenIntent(pendingIntent, true);
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 //
-//        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-//        manager.notify(1, build.build());
+//
+        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+        manager.notify(1, build.build());
 
 
         //if the alarm is repeating then do not update that alarm is inactive
@@ -205,16 +209,35 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
                 getApplicationContext().getContentResolver().update(uri, contentValues, null, null);
             }
         } else {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            Intent intent1 = new Intent(getApplicationContext(), AlarmActivity.class);
+
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, min);
             calendar.set(Calendar.SECOND, 0);
-//            calendar.set(Calendar.DAY_OF_WEEK, requestCode / 10000);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), requestCode, intent1, 0);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + DAY * 7, pendingIntent);
 
+
+            Intent i = new Intent(getApplicationContext(), AlarmActivity.class);
+            i.putExtra(AlarmContract.AlarmEntry.HOUR, hour);
+            i.putExtra(AlarmContract.AlarmEntry.MIN, min);
+            i.putExtra(AlarmContract.AlarmEntry._ID, id);
+            i.putExtra("multiple", true);
+            i.putExtra(AlarmContract.AlarmEntry.REQUEST_CODE, requestCode);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), id + requestCode, i, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DAY * 7, pendingIntent);
+
+//            Data data = new Data.Builder()
+//                    .putInt(AlarmContract.AlarmEntry.HOUR, hour)
+//                    .putInt(AlarmContract.AlarmEntry.MIN, min)
+//                    .putInt(AlarmContract.AlarmEntry._ID, id)
+//                    .putInt(AlarmContract.AlarmEntry.REQUEST_CODE, requestCode)
+//                    .putBoolean("multiple", true)
+//                    .build();
+//            OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInitialDelay(DAY * 7, TimeUnit.MILLISECONDS)
+//                    .setInputData(data).build();
+//            WorkManager workManager = WorkManager.getInstance(getApplicationContext());
+//            workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id + requestCode, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
         }
 
         Handler handler = new Handler();
@@ -265,55 +288,55 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 //    }
 
 
-    public class OnSwipeTouchListener implements View.OnTouchListener {
-        private final GestureDetector gestureDetector;
-        Context context;
-
-        OnSwipeTouchListener(Context ctx, View mainView) {
-            gestureDetector = new GestureDetector(ctx, new GestureListener());
-            mainView.setOnTouchListener(this);
-            context = ctx;
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return gestureDetector.onTouchEvent(event);
-        }
-
-        public class GestureListener extends
-                GestureDetector.SimpleOnGestureListener {
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                boolean result = false;
-                try {
-                    float diffY = e2.getY() - e1.getY();
-
-                    if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                        if (diffY > 0) {
-
-                        } else {
-
-                            finish();
-                        }
-                        result = true;
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-                return result;
-            }
-        }
-
-
-    }
+//    public class OnSwipeTouchListener implements View.OnTouchListener {
+//        private final GestureDetector gestureDetector;
+//        Context context;
+//
+//        OnSwipeTouchListener(Context ctx, View mainView) {
+//            gestureDetector = new GestureDetector(ctx, new GestureListener());
+//            mainView.setOnTouchListener(this);
+//            context = ctx;
+//        }
+//
+//        @Override
+//        public boolean onTouch(View v, MotionEvent event) {
+//            return gestureDetector.onTouchEvent(event);
+//        }
+//
+//        public class GestureListener extends
+//                GestureDetector.SimpleOnGestureListener {
+//            private static final int SWIPE_THRESHOLD = 100;
+//            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+//
+//            @Override
+//            public boolean onDown(MotionEvent e) {
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//                boolean result = false;
+//                try {
+//                    float diffY = e2.getY() - e1.getY();
+//
+//                    if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+//                        if (diffY > 0) {
+//
+//                        } else {
+//
+//                            finish();
+//                        }
+//                        result = true;
+//                    }
+//                } catch (Exception exception) {
+//                    exception.printStackTrace();
+//                }
+//                return result;
+//            }
+//        }
+//
+//
+//    }
 
     //method to set today's date
     private void setDate() {

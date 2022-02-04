@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 
-public class AutoStartService  {
+public class AutoStartService extends Service {
 //
 //    public AutoStartService(){
 //
@@ -22,4 +22,12 @@ public class AutoStartService  {
 //    protected void onHandleIntent(@Nullable Intent intent) {
 //
 //    }
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+
+        return null;
+    }
 }

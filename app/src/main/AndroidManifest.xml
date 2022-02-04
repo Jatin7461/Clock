@@ -51,6 +51,9 @@
         <provider
             android:name=".provider.AlarmProvider"
             android:authorities="com.example.clock" />
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true" />
     </application>
 
 </manifest>

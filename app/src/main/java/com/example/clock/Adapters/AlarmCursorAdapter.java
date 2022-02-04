@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.Layout;
@@ -17,16 +18,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.cursoradapter.widget.CursorAdapter;
-import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
+import com.example.clock.provider.AlarmContract.AlarmEntry;
 
-import com.example.clock.CancelAlarm;
-import com.example.clock.MultipleAlarm;
-import com.example.clock.MyWork;
+import androidx.cursoradapter.widget.CursorAdapter;
+
+
+import com.example.clock.AlarmActivity;
+
+import com.example.clock.NewAlarmActivity;
 import com.example.clock.R;
 import com.example.clock.provider.AlarmContract;
 import com.example.clock.utils.AlarmUtils;
@@ -36,11 +35,20 @@ import java.util.concurrent.TimeUnit;
 
 public class AlarmCursorAdapter extends CursorAdapter {
 
-    WorkManager workManager;
+
+    AlarmManager alarmManager;
+    private final int SUNDAY_CODE = 10000;
+    private final int MONDAY_CODE = 20000;
+    private final int TUESDAY_CODE = 30000;
+    private final int WEDNESDAY_CODE = 40000;
+    private final int THURSDAY_CODE = 50000;
+    private final int FRIDAY_CODE = 60000;
+    private final int SATURDAY_CODE = 70000;
 
     public AlarmCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        workManager = WorkManager.getInstance(context);
+
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
 
@@ -56,15 +64,25 @@ public class AlarmCursorAdapter extends CursorAdapter {
 
         TextView time = view.findViewById(R.id.alarm_time);
         int hourId = cursor.getColumnIndex(AlarmContract.AlarmEntry.HOUR);
-        String hour = cursor.getString(hourId);
+        String h = cursor.getString(hourId);
         int minId = cursor.getColumnIndex(AlarmContract.AlarmEntry.MIN);
-        String min = cursor.getString(minId);
-        time.setText(hour + ":" + min);
+        String m = cursor.getString(minId);
 
-        TextView days = view.findViewById(R.id.alarm_days);
+
+        int hour = Integer.parseInt(h);
+        int min = Integer.parseInt(m);
+        h = String.format("%02d", hour);
+        m = String.format("%02d", min);
+        time.setText(h + ":" + m);
+
         String daysText = getDaysText(cursor, context);
-        days.setText(daysText);
-
+        TextView days = view.findViewById(R.id.alarm_days);
+        if (daysText.length() > 0) {
+            days.setText(daysText);
+            days.setVisibility(View.VISIBLE);
+        }
+//        TextView days = view.findViewById(R.id.alarm_days);
+//        days.setText(daysText);
 
         Switch s = view.findViewById(R.id.alarm_switch);
         int boolId = cursor.getColumnIndex(AlarmContract.AlarmEntry.ACTIVE);
@@ -108,80 +126,100 @@ public class AlarmCursorAdapter extends CursorAdapter {
 
                     boolean multiple = false;
                     if (daysText.length() > 0) {
+
                         multiple = true;
                     }
 
                     Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
+                    boolean sunday = false, monday = false, tuesday = false, wednesday = false, thursday = false, friday = false, saturday = false;
+                    if (sun == 1) sunday = true;
+                    if (mon == 1) monday = true;
+                    if (tue == 1) tuesday = true;
+                    if (wed == 1) wednesday = true;
+                    if (thu == 1) thursday = true;
+                    if (fri == 1) friday = true;
+                    if (sat == 1) saturday = true;
                     if (b) {
 //                    Toast.makeText(context, "yes", Toast.LENGTH_SHORT).show();
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_ACTIVE);
                         context.getContentResolver().update(uri, contentValues, null, null);
-                        boolean sunday = false, monday = false, tuesday = false, wednesday = false, thursday = false, friday = false, saturday = false;
-                        if (sun == 1) sunday = true;
-                        if (mon == 1) monday = true;
-                        if (tue == 1) tuesday = true;
-                        if (wed == 1) wednesday = true;
-                        if (thu == 1) thursday = true;
-                        if (fri == 1) friday = true;
-                        if (sat == 1) saturday = true;
 
-                        Data data = new Data.Builder()
-                                .putBoolean(AlarmContract.AlarmEntry.SUNDAY, sunday)
-                                .putBoolean(AlarmContract.AlarmEntry.MONDAY, monday)
-                                .putBoolean(AlarmContract.AlarmEntry.TUESDAY, tuesday)
-                                .putBoolean(AlarmContract.AlarmEntry.WEDNESDAY, wednesday)
-                                .putBoolean(AlarmContract.AlarmEntry.THURSDAY, thursday)
-                                .putBoolean(AlarmContract.AlarmEntry.FRIDAY, friday)
-                                .putBoolean(AlarmContract.AlarmEntry.SATURDAY, saturday)
-                                .putInt(AlarmContract.AlarmEntry.HOUR, Integer.parseInt(hour))
-                                .putInt(AlarmContract.AlarmEntry.MIN, Integer.parseInt(min))
-                                .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
+//                        Data data = new Data.Builder()
+//                                .putBoolean(AlarmContract.AlarmEntry.SUNDAY, sunday)
+//                                .putBoolean(AlarmContract.AlarmEntry.MONDAY, monday)
+//                                .putBoolean(AlarmContract.AlarmEntry.TUESDAY, tuesday)
+//                                .putBoolean(AlarmContract.AlarmEntry.WEDNESDAY, wednesday)
+//                                .putBoolean(AlarmContract.AlarmEntry.THURSDAY, thursday)
+//                                .putBoolean(AlarmContract.AlarmEntry.FRIDAY, friday)
+//                                .putBoolean(AlarmContract.AlarmEntry.SATURDAY, saturday)
+//                                .putInt(AlarmContract.AlarmEntry.HOUR, (hour))
+//                                .putInt(AlarmContract.AlarmEntry.MIN, (min))
+//                                .putInt(AlarmContract.AlarmEntry.PENDING, id).build();
 
 
                         Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-                        calendar.set(Calendar.MINUTE, Integer.parseInt(min));
+                        calendar.set(Calendar.HOUR_OF_DAY, (hour));
+                        calendar.set(Calendar.MINUTE, (min));
                         calendar.set(Calendar.SECOND, 0);
 
                         long currentTime = System.currentTimeMillis();
                         long calendarTime = calendar.getTimeInMillis();
 
-                        OneTimeWorkRequest oneTimeWorkRequest;
+
                         if (multiple) {
-                            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MultipleAlarm.class).setInputData(data).build();
-                            workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
+                            if (sunday) setRepeatingAlarm(SUNDAY_CODE, hour, min, context, id);
+                            if (monday) setRepeatingAlarm(MONDAY_CODE, hour, min, context, id);
+                            if (tuesday) setRepeatingAlarm(TUESDAY_CODE, hour, min, context, id);
+                            if (wednesday)
+                                setRepeatingAlarm(WEDNESDAY_CODE, hour, min, context, id);
+                            if (thursday) setRepeatingAlarm(THURSDAY_CODE, hour, min, context, id);
+                            if (friday) setRepeatingAlarm(FRIDAY_CODE, hour, min, context, id);
+                            if (saturday) setRepeatingAlarm(SATURDAY_CODE, hour, min, context, id);
                         } else {
-
+                            Intent i = new Intent(context, AlarmActivity.class);
+                            i.putExtra(AlarmEntry.HOUR, hour);
+                            i.putExtra(AlarmEntry.MIN, min);
+                            i.putExtra(AlarmEntry._ID, id);
+                            PendingIntent pendingIntent = PendingIntent.getActivity(context, id, i, 0);
                             if (calendarTime < currentTime) {
-                                oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                                        .setInputData(data).setInitialDelay(currentTime - calendarTime + AlarmUtils.DAY, TimeUnit.MILLISECONDS).build();
-
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY, pendingIntent);
                             } else {
-                                oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class)
-                                        .setInputData(data).setInitialDelay(calendarTime - currentTime, TimeUnit.MILLISECONDS).build();
-
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                             }
-                            workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.KEEP, oneTimeWorkRequest);
                         }
 
 
                         AlarmUtils.showMessage(context, calendar);
 
                     } else {
-                        Log.v("", "toggled off");
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
                         context.getContentResolver().update(uri, contentValues, null, null);
-//                        workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
-                        Data data = new Data.Builder()
-                                .putInt(AlarmContract.AlarmEntry._ID, id)
-                                .putBoolean("multiple", multiple)
-                                .build();
-                        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(CancelAlarm.class).setInputData(data).build();
-                        workManager.enqueue(oneTimeWorkRequest);
-//                    workManager.cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
 
+                        if (multiple) {
+
+                            if (sunday) {
+                                cancelRepeatingAlarm(SUNDAY_CODE, id, context, hour, min);
+                            }
+                            if (monday) cancelRepeatingAlarm(MONDAY_CODE, id, context, hour, min);
+                            if (tuesday) cancelRepeatingAlarm(TUESDAY_CODE, id, context, hour, min);
+                            if (wednesday)
+                                cancelRepeatingAlarm(WEDNESDAY_CODE, id, context, hour, min);
+                            if (thursday)
+                                cancelRepeatingAlarm(THURSDAY_CODE, id, context, hour, min);
+                            if (friday) cancelRepeatingAlarm(FRIDAY_CODE, id, context, hour, min);
+                            if (saturday)
+                                cancelRepeatingAlarm(SATURDAY_CODE, id, context, hour, min);
+
+                        } else {
+                            Intent i = new Intent(context, AlarmActivity.class);
+                            i.putExtra(AlarmEntry.HOUR, hour);
+                            i.putExtra(AlarmEntry.MIN, min);
+                            i.putExtra(AlarmEntry._ID, id);
+                            PendingIntent pendingIntent = PendingIntent.getActivity(context, id, i, 0);
+                            alarmManager.cancel(pendingIntent);
+                        }
                     }
                 }
             }
@@ -248,4 +286,35 @@ public class AlarmCursorAdapter extends CursorAdapter {
         return showDays;
     }
 
+    private void setRepeatingAlarm(int requestCode, int hour, int min, Context context, int id) {
+        long DAY = 24 * 60 * 60 * 1000;
+        Intent i = new Intent(context, AlarmActivity.class);
+        i.putExtra(AlarmEntry.HOUR, hour);
+        i.putExtra(AlarmEntry.MIN, min);
+        i.putExtra(AlarmEntry._ID, id);
+        i.putExtra("multiple", true);
+        i.putExtra(AlarmEntry.REQUEST_CODE, requestCode);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, min);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.DAY_OF_WEEK, requestCode / 10000);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, id + requestCode, i, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + DAY * 7, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    private void cancelRepeatingAlarm(int requestCode, int id, Context context, int hour, int min) {
+        Intent i = new Intent(context, AlarmActivity.class);
+        i.putExtra(AlarmEntry.HOUR, hour);
+        i.putExtra(AlarmEntry.MIN, min);
+        i.putExtra(AlarmEntry._ID, id);
+        i.putExtra("multiple", true);
+        i.putExtra(AlarmEntry.REQUEST_CODE, requestCode);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, id + requestCode, i, 0);
+        alarmManager.cancel(pendingIntent);
+    }
 }

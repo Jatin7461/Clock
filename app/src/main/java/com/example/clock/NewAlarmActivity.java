@@ -9,15 +9,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Constraints;
-import androidx.work.Data;
 
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -50,6 +45,7 @@ import java.util.ArrayList;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 public class NewAlarmActivity extends AppCompatActivity {
@@ -57,7 +53,14 @@ public class NewAlarmActivity extends AppCompatActivity {
     final String HOUR = "hour", MIN = "min";
 
     final int SCROLL = Integer.MAX_VALUE / 2;
-
+    private ArrayList<Integer> requestCodeList;
+    public static final int SUNDAY_CODE = 10000;
+    public static final int MONDAY_CODE = 20000;
+    public static final int TUESDAY_CODE = 30000;
+    public static final int WEDNESDAY_CODE = 40000;
+    public static final int THURSDAY_CODE = 50000;
+    public static final int FRIDAY_CODE = 60000;
+    public static final int SATURDAY_CODE = 70000;
     private TextView ringtone, vibrate;
     RadioButton toggleVibrate;
     private final int DAY = 24 * 60 * 60 * 1000;
@@ -71,7 +74,7 @@ public class NewAlarmActivity extends AppCompatActivity {
     private NumberAdapter hoursAdapter, minutesAdapter;
     private Button mButton, addAlarm, addNewAlarm;
     private AlarmManager alarmManager;
-    private WorkManager workManager;
+
     private Toolbar toolbar;
     private Intent intent;
     private int intentCode;
@@ -84,7 +87,7 @@ public class NewAlarmActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_alarm);
 
-        workManager = WorkManager.getInstance(this);
+
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         ringtone = findViewById(R.id.ringtone);
         hover = findViewById(R.id.hover);
@@ -104,6 +107,15 @@ public class NewAlarmActivity extends AppCompatActivity {
         thursday = findViewById(R.id.thursday);
         friday = findViewById(R.id.friday);
         saturday = findViewById(R.id.saturday);
+
+        requestCodeList = new ArrayList<>();
+        requestCodeList.add(SUNDAY_CODE);
+        requestCodeList.add(MONDAY_CODE);
+        requestCodeList.add(TUESDAY_CODE);
+        requestCodeList.add(WEDNESDAY_CODE);
+        requestCodeList.add(THURSDAY_CODE);
+        requestCodeList.add(FRIDAY_CODE);
+        requestCodeList.add(SATURDAY_CODE);
 
         sun = mon = tue = wed = thu = fri = sat = false;
         vib = true;
@@ -305,15 +317,14 @@ public class NewAlarmActivity extends AppCompatActivity {
             }
         });
 
-//
-//        ringtone.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent ringIntent = new Intent(NewAlarmActivity.this, RingtoneActivity.class);
-//                startActivity(ringIntent);
-//
-//            }
-//        });
+        ringtone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent ringIntent = new Intent(NewAlarmActivity.this, RingtoneActivity.class);
+                startActivity(ringIntent);
+
+            }
+        });
 
         toggleVibrate = findViewById(R.id.radioButton);
         vibrate = findViewById(R.id.vibrate);
@@ -399,31 +410,31 @@ public class NewAlarmActivity extends AppCompatActivity {
             //if the option for repeat is selected then change values for specific days in db
             // and set that day in the calendar
             if (sun) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                 contentValues.put(AlarmContract.AlarmEntry.SUNDAY, 1);
             }
             if (mon) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 contentValues.put(AlarmContract.AlarmEntry.MONDAY, 1);
             }
             if (tue) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
                 contentValues.put(AlarmContract.AlarmEntry.TUESDAY, 1);
             }
             if (wed) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
                 contentValues.put(AlarmContract.AlarmEntry.WEDNESDAY, 1);
             }
             if (thu) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
                 contentValues.put(AlarmContract.AlarmEntry.THURSDAY, 1);
             }
             if (fri) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
                 contentValues.put(AlarmContract.AlarmEntry.FRIDAY, 1);
             }
             if (sat) {
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+//                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
                 contentValues.put(AlarmContract.AlarmEntry.SATURDAY, 1);
             }
 
@@ -440,38 +451,73 @@ public class NewAlarmActivity extends AppCompatActivity {
             }
 
 
-            //data for work request
-            Data data = new Data.Builder()
-                    .putInt(AlarmContract.AlarmEntry.HOUR, Integer.parseInt(hour))
-                    .putInt(AlarmContract.AlarmEntry.MIN, Integer.parseInt(min))
-                    .putInt(AlarmContract.AlarmEntry.PENDING, id)
-                    .putBoolean(AlarmContract.AlarmEntry.SUNDAY, sun)
-                    .putBoolean(AlarmContract.AlarmEntry.MONDAY, mon)
-                    .putBoolean(AlarmContract.AlarmEntry.TUESDAY, tue)
-                    .putBoolean(AlarmContract.AlarmEntry.WEDNESDAY, wed)
-                    .putBoolean(AlarmContract.AlarmEntry.THURSDAY, thu)
-                    .putBoolean(AlarmContract.AlarmEntry.FRIDAY, fri)
-                    .putBoolean(AlarmContract.AlarmEntry.SATURDAY, sat)
-                    .build();
-
             //if any day is selected that means alarm should repeat
             boolean repeat = false;
             if (sun || mon || tue || wed || thu || fri || sat) repeat = true;
 
+            int Hour = Integer.parseInt(hour);
+            int Min = Integer.parseInt(min);
 
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             // code when alarm is set for repeat
-            OneTimeWorkRequest oneTimeWorkRequest;
+
             if (repeat) {
-                Log.v("", "making a work request");
-                oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MultipleAlarm.class).setInputData(data).build();
-                workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
-                AlarmUtils.repeatingAlarmMessage(NewAlarmActivity.this, calendar);
+                if (sun) {
+                    setRepeatingAlarm(SUNDAY_CODE, Hour, Min);
+                }
+                if (mon) {
+                    setRepeatingAlarm(MONDAY_CODE, Hour, Min);
+                }
+                if (tue) {
+                    setRepeatingAlarm(TUESDAY_CODE, Hour, Min);
+                }
+                if (wed) {
+                    setRepeatingAlarm(WEDNESDAY_CODE, Hour, Min);
+                }
+                if (thu) {
+                    setRepeatingAlarm(THURSDAY_CODE, Hour, Min);
+                }
+                if (fri) {
+                    setRepeatingAlarm(FRIDAY_CODE, Hour, Min);
+                }
+                if (sat) {
+                    setRepeatingAlarm(SATURDAY_CODE, Hour, Min);
+                }
             }
+
             // when alarm is set for one time only
             else {
-                oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInputData(data).build();
-                workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
-                AlarmUtils.showMessage(NewAlarmActivity.this, calendar);
+                //data for work request
+                Intent i = new Intent(NewAlarmActivity.this, AlarmActivity.class);
+                i.putExtra(AlarmEntry.HOUR, Integer.parseInt(hour));
+                i.putExtra(AlarmEntry.MIN, Integer.parseInt(min));
+                i.putExtra(AlarmEntry._ID, id);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, id, i, 0);
+                try {
+
+
+                    long calendarTime = calendar.getTimeInMillis();
+                    if (System.currentTimeMillis() > calendarTime) {
+                        long interval = DAY + calendarTime - System.currentTimeMillis();
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendarTime + DAY, pendingIntent);
+
+//                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+//                                .setInitialDelay(interval, TimeUnit.MILLISECONDS).setInputData(data).build();
+
+                    } else {
+                        long interval = calendarTime - System.currentTimeMillis();
+
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendarTime, pendingIntent);
+
+//                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+//                                .setInitialDelay(interval, TimeUnit.MILLISECONDS).setInputData(data).build();
+                    }
+
+//                    workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
+                    AlarmUtils.showMessage(NewAlarmActivity.this, calendar);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             finish();
         }
@@ -552,6 +598,54 @@ public class NewAlarmActivity extends AppCompatActivity {
             i++;
         }
 
+    }
+
+    //    private void setMultipleAlarms(String hour, String min, int requestCode, int id) {
+//
+//        Data data = new Data.Builder()
+//                .putInt(AlarmEntry.HOUR, Integer.parseInt(hour))
+//                .putInt(AlarmEntry.MIN, Integer.parseInt(min))
+//                .putInt(AlarmEntry._ID, id)
+//                .putBoolean("multiple", true)
+//                .putInt(AlarmEntry.REQUEST_CODE, requestCode).build();
+//
+//        Calendar calendar1 = Calendar.getInstance();
+//        calendar1.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+//        calendar1.set(Calendar.MINUTE, Integer.parseInt(min));
+//        calendar1.set(Calendar.SECOND, 0);
+//        calendar1.set(Calendar.DAY_OF_WEEK, requestCode / 10000);
+//        OneTimeWorkRequest oneTimeWorkRequest;
+//        if (calendar1.getTimeInMillis() < System.currentTimeMillis()) {
+//            long remaining = System.currentTimeMillis() - calendar1.getTimeInMillis();
+//            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+//                    .setInitialDelay(DAY * 7 + remaining, TimeUnit.MILLISECONDS).setInputData(data).build();
+//        } else {
+//            long remaining = calendar1.getTimeInMillis() - System.currentTimeMillis();
+//            oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+//                    .setInitialDelay(remaining, TimeUnit.MILLISECONDS).setInputData(data).build();
+//
+//
+//        }
+//        workManager.enqueueUniqueWork(AlarmEntry.TABLE_NAME + (id + requestCode), ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
+//    }
+    private void setRepeatingAlarm(int requestCode, int hour, int min) {
+        Intent i = new Intent(NewAlarmActivity.this, AlarmActivity.class);
+        i.putExtra(AlarmEntry.HOUR, hour);
+        i.putExtra(AlarmEntry.MIN, min);
+        i.putExtra(AlarmEntry._ID, id);
+        i.putExtra("multiple", true);
+        i.putExtra(AlarmEntry.REQUEST_CODE, requestCode);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, min);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.DAY_OF_WEEK, requestCode / 10000);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, id + requestCode, i, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + DAY * 7, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
     }
 
 }

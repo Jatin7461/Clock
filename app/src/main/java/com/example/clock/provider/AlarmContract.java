@@ -39,6 +39,7 @@ public class AlarmContract {
         public static final int SELECTED = 1;
         public static final int NOT_SELECTED = 0;
 
+        public static final String REQUEST_CODE = "request_code";
         public static final int ALARM_ACTIVE = 1;
         public static final int ALARM_INACTIVE = 0;
         public static final String INTENT_BUNDLE = "bundle";

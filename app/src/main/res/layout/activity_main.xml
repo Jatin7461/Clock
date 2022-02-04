@@ -67,13 +67,13 @@
         android:elevation="3dp"
         android:orientation="vertical"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/delete_option"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/delete_option"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="6dp"
@@ -167,6 +167,8 @@
         android:id="@+id/extra_options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
+        android:elevation="7dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,6 +4,7 @@ package com.example.clock.provider;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
 public class AlarmDB extends SQLiteOpenHelper {
@@ -18,6 +19,7 @@ public class AlarmDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        Log.v("", "creating db");
         sqLiteDatabase.execSQL(AlarmContract.AlarmEntry.CREATE_TABLE);
     }
 
