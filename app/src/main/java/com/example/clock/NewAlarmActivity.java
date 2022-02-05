@@ -6,9 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 
 import android.app.AlarmManager;
@@ -74,7 +80,7 @@ public class NewAlarmActivity extends AppCompatActivity {
     private NumberAdapter hoursAdapter, minutesAdapter;
     private Button mButton, addAlarm, addNewAlarm;
     private AlarmManager alarmManager;
-
+    private ConstraintLayout vibration;
     private Toolbar toolbar;
     private Intent intent;
     private int intentCode;
@@ -329,38 +335,48 @@ public class NewAlarmActivity extends AppCompatActivity {
         toggleVibrate = findViewById(R.id.radioButton);
         vibrate = findViewById(R.id.vibrate);
         toggleVibrate.setChecked(vib);
+
+        toggleVibrate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setVibration();
+            }
+        });
         vibrate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (vib) {
-                    vib = false;
-                    toggleVibrate.setChecked(false);
-                } else {
-
-
-                    vib = true;
-                    toggleVibrate.setChecked(true);
-                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-
-                    try {
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            vibrator.vibrate(VibrationEffect.createWaveform(new long[]{0, 200}, 1));
-
-                        } else {
-                            //deprecated in API 26
-                            vibrator.vibrate(new long[]{0, 200}, 1);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                setVibration();
             }
         });
 
     }
 
+    private void setVibration() {
+        if (vib) {
+            vib = false;
+            toggleVibrate.setChecked(false);
+        } else {
+
+
+            vib = true;
+            toggleVibrate.setChecked(true);
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+
+            try {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createWaveform(new long[]{0, 200}, 1));
+
+                } else {
+                    //deprecated in API 26
+                    vibrator.vibrate(new long[]{0, 200}, 1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -489,6 +505,7 @@ public class NewAlarmActivity extends AppCompatActivity {
             else {
                 //data for work request
                 Intent i = new Intent(NewAlarmActivity.this, AlarmActivity.class);
+
                 i.putExtra(AlarmEntry.HOUR, Integer.parseInt(hour));
                 i.putExtra(AlarmEntry.MIN, Integer.parseInt(min));
                 i.putExtra(AlarmEntry._ID, id);
@@ -507,8 +524,26 @@ public class NewAlarmActivity extends AppCompatActivity {
                     } else {
                         long interval = calendarTime - System.currentTimeMillis();
 
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendarTime, pendingIntent);
 
+//                        Data data = new Data.Builder()
+//                                .putInt(AlarmEntry.HOUR, Integer.parseInt(hour))
+//                                .putInt(AlarmEntry.MIN, Integer.parseInt(min))
+//                                .putInt(AlarmEntry._ID, id)
+//                                .putBoolean("multiple", false).build();
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+//                        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(MyWork.class, 1, TimeUnit.DAYS)
+//                                .setInitialDelay(interval, TimeUnit.MILLISECONDS).setInputData(data).build();
+//                        WorkManager.getInstance(this).enqueueUniquePeriodicWork(AlarmEntry.TABLE_NAME + id,
+//                                ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
+
+//                        Intent serviceIntent = new Intent(this, AlarmService.class);
+//                        serviceIntent.putExtra(AlarmEntry.HOUR, Integer.parseInt(hour));
+//                        serviceIntent.putExtra(AlarmEntry.MIN, Integer.parseInt(min));
+//                        serviceIntent.putExtra(AlarmEntry._ID, id);
+//                        PendingIntent servicePending = PendingIntent.getService(this, id, serviceIntent, 0);
+//                        startService(serviceIntent);
+//                        startForegroundService(serviceIntent);
+//                        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 0, pendingIntent);
 //                        oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
 //                                .setInitialDelay(interval, TimeUnit.MILLISECONDS).setInputData(data).build();
                     }

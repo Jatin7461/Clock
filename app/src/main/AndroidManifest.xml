@@ -53,7 +53,18 @@
             android:authorities="com.example.clock" />
         <receiver
             android:name=".AlarmReceiver"
-            android:enabled="true" />
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="mypackage.START_ALARM"></action>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".AlarmService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

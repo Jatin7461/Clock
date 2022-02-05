@@ -9,6 +9,10 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,51 +23,57 @@ import com.example.clock.R;
 import java.util.List;
 import java.util.Map;
 
-public class RingtoneAdapter extends RecyclerView.Adapter<RingtoneAdapter.RingtoneViewHolder> {
+public class RingtoneAdapter extends BaseAdapter {
 
-
-    List<String> list;
+    Context context;
+    List<String> ringtones;
     Map<String, String> map;
+    List<Boolean> selected;
 
-    public RingtoneAdapter(Context context, List<String> list, Map<String, String> map) {
-        this.list = list;
+    public RingtoneAdapter(Context context, List<String> ringtones, List<Boolean> s, Map<String, String> map) {
+        this.ringtones = ringtones;
         this.map = map;
-    }
-
-    @NonNull
-    @Override
-    public RingtoneViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.ringtone_list, parent, false);
-        return new RingtoneViewHolder(view);
-    }
-
-
-    @Override
-    public void onBindViewHolder(@NonNull RingtoneViewHolder holder, int position) {
-
-
-        holder.ringtoneName.setText(list.get(position));
-
+        this.selected = s;
+        this.context = context;
     }
 
     @Override
-    public int getItemCount() {
-        return list.size();
+    public int getCount() {
+        return ringtones.size();
     }
 
-    public class RingtoneViewHolder extends RecyclerView.ViewHolder {
-        public TextView ringtoneName;
+    @Override
+    public Object getItem(int i) {
+        return null;
+    }
 
-        public RingtoneViewHolder(View view) {
-            super(view);
+    @Override
+    public long getItemId(int i) {
+        return 0;
+    }
 
-            ringtoneName = view.findViewById(R.id.ringtone_name);
+
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+
+        View listview = view;
+        if (listview == null) {
+            listview = LayoutInflater.from(context).inflate(R.layout.ringtone_list, viewGroup, false);
         }
 
-
+        TextView ringtoneName = listview.findViewById(R.id.ringtone_name);
+        ringtoneName.setText(ringtones.get(i));
+        RadioButton radioButton = listview.findViewById(R.id.ringtone_selected);
+        if (selected.get(i)) {
+            radioButton.setVisibility(View.VISIBLE);
+        } else {
+            radioButton.setVisibility(View.INVISIBLE);
+        }
+        return listview;
     }
 
-
+    public void setSelected(List<Boolean> b) {
+        this.selected = b;
+        notifyDataSetChanged();
+    }
 }

@@ -184,18 +184,18 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         r.setAudioAttributes(audioAttributes);
         r.play();
 
-        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("alarm")
-                .setContentText("alarm")
+//        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
+//                .setSmallIcon(R.drawable.ic_launcher_background)
+//                .setContentTitle("alarm")
+//                .setContentText("alarm")
 //                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher_background))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                .setPriority(NotificationCompat.PRIORITY_HIGH)
 //                .setVibrate(new long[]{1000, 1000, 1000, 1000})
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 //
 //
-        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-        manager.notify(1, build.build());
+//        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+//        manager.notify(1, build.build());
 
 
         //if the alarm is repeating then do not update that alarm is inactive
