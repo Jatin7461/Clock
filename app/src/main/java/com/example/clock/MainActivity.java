@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ListView listView;
     private AlarmCursorAdapter adapter;
     private RecyclerView recyclerView;
-//    private AlarmAdapter recyclerAdapter;
+    //    private AlarmAdapter recyclerAdapter;
     private Toolbar toolbar;
     private static final String TAG = MainActivity.class.getName();
     String manufacturer = Build.MANUFACTURER;
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent();
-    //        if ("vivo".equalsIgnoreCase(manufacturer)) {
-    //            intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-    //        }
+        //        if ("vivo".equalsIgnoreCase(manufacturer)) {
+        //            intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+        //        }
         setContentView(R.layout.activity_main);
 //        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.O_MR1){
 //
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String time = t.getText().toString();
                 Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, l);
                 String projection[] = {AlarmEntry.SUNDAY, AlarmEntry.MONDAY, AlarmEntry.TUESDAY, AlarmEntry.WEDNESDAY,
-                        AlarmEntry.THURSDAY, AlarmEntry.FRIDAY, AlarmEntry.SATURDAY};
+                        AlarmEntry.THURSDAY, AlarmEntry.FRIDAY, AlarmEntry.SATURDAY, AlarmEntry.RINGTONE, AlarmEntry.RINGTONE_URI};
                 Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
                 cursor.moveToFirst();
                 int sunId = cursor.getColumnIndex(AlarmContract.AlarmEntry.SUNDAY);
@@ -215,6 +215,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 int satId = cursor.getColumnIndex(AlarmContract.AlarmEntry.SATURDAY);
                 int sat = cursor.getInt(satId);
 
+                int ringtoneId = cursor.getColumnIndex(AlarmEntry.RINGTONE);
+                String ringtone = cursor.getString(ringtoneId);
+
+                int ringtoneUriId = cursor.getColumnIndex(AlarmEntry.RINGTONE_URI);
+                String ringtoneUri = cursor.getString(ringtoneUriId);
+
                 bundle.putString(AlarmEntry.TIME, time);
                 intent.putExtra(AlarmEntry._ID, l);
                 intent.putExtra(AlarmEntry.INTENT_BUNDLE, bundle);
@@ -226,6 +232,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 intent.putExtra(AlarmEntry.THURSDAY, thu);
                 intent.putExtra(AlarmEntry.FRIDAY, fri);
                 intent.putExtra(AlarmEntry.SATURDAY, sat);
+                intent.putExtra(AlarmEntry.RINGTONE, ringtone);
+                intent.putExtra(AlarmEntry.RINGTONE_URI, ringtoneUri);
+
                 startActivity(intent);
             }
         });

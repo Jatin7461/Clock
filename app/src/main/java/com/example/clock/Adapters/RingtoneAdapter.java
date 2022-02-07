@@ -76,4 +76,9 @@ public class RingtoneAdapter extends BaseAdapter {
         this.selected = b;
         notifyDataSetChanged();
     }
+
+    public void updateList(List<String> list) {
+        this.ringtones = list;
+        notifyDataSetChanged();
+    }
 }

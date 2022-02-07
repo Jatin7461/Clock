@@ -112,6 +112,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         int requestCode = intent.getIntExtra(AlarmContract.AlarmEntry.REQUEST_CODE, -1);
         int hour = intent.getIntExtra(AlarmContract.AlarmEntry.HOUR, -1);
         int min = intent.getIntExtra(AlarmContract.AlarmEntry.MIN, -1);
+        Uri ringtoneUri = Uri.parse(intent.getStringExtra(AlarmContract.AlarmEntry.RINGTONE_URI));
 
         Calendar calendar1 = Calendar.getInstance();
         int dayNumber = calendar1.get(Calendar.DAY_OF_WEEK);
@@ -168,22 +169,20 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
             } else {
                 //deprecated in API 26
-                long a[] = new long[]{1000, 1000};
 
-                vibrator.vibrate(new long[]{1000, 1000}, 0);
+                vibrator.vibrate(new long[]{500, 500}, 0);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+//        Uri notification = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_ALARM);
+        r = RingtoneManager.getRingtone(getApplicationContext(), ringtoneUri);
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.FLAG_AUDIBILITY_ENFORCED).build();
         r.setAudioAttributes(audioAttributes);
         r.play();
-
 //        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
 //                .setSmallIcon(R.drawable.ic_launcher_background)
 //                .setContentTitle("alarm")
@@ -225,19 +224,11 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), id + requestCode, i, 0);
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DAY * 7, pendingIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DAY * 7, pendingIntent);
+            else
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + DAY * 7, pendingIntent);
 
-//            Data data = new Data.Builder()
-//                    .putInt(AlarmContract.AlarmEntry.HOUR, hour)
-//                    .putInt(AlarmContract.AlarmEntry.MIN, min)
-//                    .putInt(AlarmContract.AlarmEntry._ID, id)
-//                    .putInt(AlarmContract.AlarmEntry.REQUEST_CODE, requestCode)
-//                    .putBoolean("multiple", true)
-//                    .build();
-//            OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWork.class).setInitialDelay(DAY * 7, TimeUnit.MILLISECONDS)
-//                    .setInputData(data).build();
-//            WorkManager workManager = WorkManager.getInstance(getApplicationContext());
-//            workManager.enqueueUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id + requestCode, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest);
         }
 
         Handler handler = new Handler();
