@@ -1,6 +1,7 @@
 package com.example.clock.provider;
 
 import android.net.Uri;
+import android.os.Vibrator;
 import android.provider.BaseColumns;
 
 public class AlarmContract {
@@ -30,19 +31,26 @@ public class AlarmContract {
         public static final String _ID = BaseColumns._ID;
         public static final String RINGTONE = "ringtone";
         public static final String RINGTONE_URI = "ringtoneuri";
+        public static final String VIBRATE = "vibrate";
+        public static final String SNOOZE = "snooze";
+
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + _ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + TIME + " INTEGER NOT NULL, " +
                 HOUR + " TEXT NOT NULL, " + MIN + " TEXT NOT NULL, " + ACTIVE + " INTEGER NOT NULL DEFAULT 1, " + SUNDAY + " INTEGER NOT NULL DEFAULT 0, "
                 + MONDAY + " INTEGER NOT NULL DEFAULT 0, " + TUESDAY + " INTEGER NOT NULL DEFAULT 0, " + WEDNESDAY
                 + " INTEGER NOT NULL DEFAULT 0, " + THURSDAY + " INTEGER NOT NULL DEFAULT 0, " + FRIDAY + " INTEGER NOT NULL DEFAULT 0, "
-                + SATURDAY + " INTEGER NOT NULL DEFAULT 0, " + RINGTONE + " TEXT, " + RINGTONE_URI + " TEXT, " + LABEL + " TEXT )";
+                + SATURDAY + " INTEGER NOT NULL DEFAULT 0, " + RINGTONE + " TEXT, " + RINGTONE_URI + " TEXT, " + VIBRATE + " INTEGER, "
+                + SNOOZE + " INTEGER NOT NULL DEFAULT 0, " + LABEL + " TEXT )";
 
         public static final int SELECTED = 1;
         public static final int NOT_SELECTED = 0;
 
+        public static final String RINGTONE_OFF = "ringtoneoff";
         public static final String REQUEST_CODE = "request_code";
         public static final int ALARM_ACTIVE = 1;
         public static final int ALARM_INACTIVE = 0;
+        public static final int VIBRATE_ON = 1;
+        public static final int VIBRATE_OFF = 0;
         public static final String INTENT_BUNDLE = "bundle";
         public static final String EDIT_ALARM = "edit";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_AUTHORITY, PATH_ALARMS);

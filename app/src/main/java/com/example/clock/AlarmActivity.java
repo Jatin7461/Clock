@@ -21,6 +21,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -43,6 +44,7 @@ import android.widget.Toast;
 
 import com.example.clock.Fragments.SwipeAlarm;
 import com.example.clock.provider.AlarmContract;
+import com.example.clock.provider.AlarmContract.AlarmEntry;
 
 import org.w3c.dom.Text;
 
@@ -60,8 +62,12 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     Ringtone r;
     Vibrator vibrator;
     TextView date;
-
+    private int vibrate;
+    Handler handler;
+    Runnable runnable;
     float dY;
+    private int snooze;
+    int id;
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -73,6 +79,8 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
             case MotionEvent.ACTION_MOVE:
                 if (view.getY() < -200) {
                     view.animate().translationY(-500);
+                    handler.removeCallbacks(runnable);
+
                     finish();
                 }
                 if (event.getRawY() + dY < 0) {
@@ -108,11 +116,33 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
         int code = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
         boolean multiple = intent.getBooleanExtra("multiple", false);
-        int id = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
+        id = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
         int requestCode = intent.getIntExtra(AlarmContract.AlarmEntry.REQUEST_CODE, -1);
-        int hour = intent.getIntExtra(AlarmContract.AlarmEntry.HOUR, -1);
-        int min = intent.getIntExtra(AlarmContract.AlarmEntry.MIN, -1);
-        Uri ringtoneUri = Uri.parse(intent.getStringExtra(AlarmContract.AlarmEntry.RINGTONE_URI));
+        int hour;
+        int min;
+        Uri ringtoneUri;
+
+
+        Cursor cursor;
+        Uri alarmUri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
+        String[] projection = {AlarmContract.AlarmEntry.HOUR, AlarmContract.AlarmEntry.MIN,
+                AlarmContract.AlarmEntry.RINGTONE_URI, AlarmContract.AlarmEntry.VIBRATE, AlarmContract.AlarmEntry.SNOOZE};
+        cursor = getContentResolver().query(alarmUri, projection, null, null, null);
+        cursor.moveToFirst();
+        int hourId = cursor.getColumnIndex(AlarmContract.AlarmEntry.HOUR);
+        hour = cursor.getInt(hourId);
+
+        int minId = cursor.getColumnIndex(AlarmContract.AlarmEntry.MIN);
+        min = cursor.getInt(minId);
+
+        int ringtoneId = cursor.getColumnIndex(AlarmContract.AlarmEntry.RINGTONE_URI);
+        String ringtone = cursor.getString(ringtoneId);
+
+        int vibrateId = cursor.getColumnIndex(AlarmContract.AlarmEntry.VIBRATE);
+        vibrate = cursor.getInt(vibrateId);
+
+        int snoozeId = cursor.getColumnIndex(AlarmEntry.SNOOZE);
+        snooze = cursor.getInt(snoozeId);
 
         Calendar calendar1 = Calendar.getInstance();
         int dayNumber = calendar1.get(Calendar.DAY_OF_WEEK);
@@ -161,40 +191,28 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-
-        try {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createWaveform(new long[]{1000, 1000}, 0));
-
-            } else {
-                //deprecated in API 26
-
-                vibrator.vibrate(new long[]{500, 500}, 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        vibrateAlarm(vibrate);
 
 
 //        Uri notification = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_ALARM);
-        r = RingtoneManager.getRingtone(getApplicationContext(), ringtoneUri);
-        AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.FLAG_AUDIBILITY_ENFORCED).build();
-        r.setAudioAttributes(audioAttributes);
-        r.play();
-//        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
-//                .setSmallIcon(R.drawable.ic_launcher_background)
-//                .setContentTitle("alarm")
-//                .setContentText("alarm")
-//                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher_background))
-//                .setPriority(NotificationCompat.PRIORITY_HIGH)
-//                .setVibrate(new long[]{1000, 1000, 1000, 1000})
-//                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-//
-//
-//        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-//        manager.notify(1, build.build());
+        if (!ringtone.equals("")) {
+            ringtoneUri = Uri.parse(cursor.getString(ringtoneId));
+            r = RingtoneManager.getRingtone(getApplicationContext(), ringtoneUri);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.FLAG_AUDIBILITY_ENFORCED).build();
+            r.setAudioAttributes(audioAttributes);
+            r.play();
+        }
+        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("alarm snoozed")
+                .setContentText("alarm snoozed for 5 minutes")
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher_background))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+
+        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
 
 
         //if the alarm is repeating then do not update that alarm is inactive
@@ -231,14 +249,21 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
         }
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        runnable = new Runnable() {
             @Override
             public void run() {
 
+                if (snooze < 5) {
+                    snoozeAlarm(id);
+                } else {
+                    updateSnooze(id);
+                }
+                manager.notify(1, build.build());
                 finish();
             }
-        }, 30000);
+        };
+        handler = new Handler();
+        handler.postDelayed(runnable, 45000);
 
     }
 
@@ -254,7 +279,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     @Override
     protected void onResume() {
         super.onResume();
-        vibrator.vibrate(new long[]{1000, 1000}, 0);
+        vibrateAlarm(vibrate);
     }
 
     //    //    @Override
@@ -383,7 +408,42 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
     }
 
+    private void vibrateAlarm(int vibrate) {
+        if (vibrate == 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createWaveform(new long[]{0, 500, 500}, 0));
 
+            } else {
+                //deprecated in API 26
+
+                vibrator.vibrate(new long[]{500, 500}, 0);
+            }
+        }
+    }
+
+    private void snoozeAlarm(int id) {
+        ContentValues contentValues = new ContentValues();
+        Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
+        contentValues.put(AlarmEntry.SNOOZE, snooze + 1);
+        int i = getContentResolver().update(uri, contentValues, null, null);
+
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
+        intent.putExtra(AlarmEntry._ID, id);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), id, intent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 300000, pendingIntent);
+        } else
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 300000, pendingIntent);
+    }
+
+    private void updateSnooze(int id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(AlarmEntry.SNOOZE, 0);
+        Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
+        getContentResolver().update(uri, contentValues, null, null);
+    }
 }
 
 

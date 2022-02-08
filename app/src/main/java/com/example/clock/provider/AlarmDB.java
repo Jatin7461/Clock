@@ -25,7 +25,10 @@ public class AlarmDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        i++;
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + AlarmContract.AlarmEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
+
+
     }
 }

@@ -58,6 +58,7 @@ import java.util.Map;
 public class NewAlarmActivity extends AppCompatActivity {
 
 
+    boolean alarmChanged = false;
     private Map<String, String> map;
     final int SCROLL = Integer.MAX_VALUE / 2;
 
@@ -87,7 +88,7 @@ public class NewAlarmActivity extends AppCompatActivity {
     private boolean sun, mon, tue, wed, thu, fri, sat, vib;
     //    private final int LOADER_ID = 1;
     private String alarmRingtone;
-    private Uri ringtoneUri;
+    private String ringtoneUri;
 
     TextView ringtone, vibrate;
 
@@ -120,25 +121,20 @@ public class NewAlarmActivity extends AppCompatActivity {
             saturday = findViewById(R.id.saturday);
 
 
-            try {
-
-                RingtoneManager manager = new RingtoneManager(this);
-                manager.setType(RingtoneManager.TYPE_ALARM);
-                Cursor cursor = manager.getCursor();
-                Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM);
-                while (cursor.moveToNext()) {
-                    String notificationTitle = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
-                    String notificationUri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX) + "/" + cursor.getString(RingtoneManager.ID_COLUMN_INDEX);
-                    Uri ringtoneuri = Uri.parse(notificationUri);
-                    if (ringtoneuri.toString().equals(uri.toString())) {
-                        ringtone.setText(notificationTitle);
-                        alarmRingtone = notificationTitle;
-                    }
+            RingtoneManager manager = new RingtoneManager(this);
+            manager.setType(RingtoneManager.TYPE_ALARM);
+            Cursor cursor = manager.getCursor();
+            Uri uri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM);
+            while (cursor.moveToNext()) {
+                String notificationTitle = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
+                String notificationUri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX) + "/" + cursor.getString(RingtoneManager.ID_COLUMN_INDEX);
+                Uri ringtoneuri = Uri.parse(notificationUri);
+                if (ringtoneuri.toString().equals(uri.toString())) {
+                    ringtone.setText(notificationTitle);
+                    alarmRingtone = notificationTitle;
                 }
-//                cursor.close();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+//
 
 
             sun = mon = tue = wed = thu = fri = sat = false;
@@ -207,7 +203,7 @@ public class NewAlarmActivity extends AppCompatActivity {
             //when intent is for new alarm just change title of activity/
             if (intentCode == -1) {
                 getSupportActionBar().setTitle(R.string.add_alarm);
-                ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM);
+                ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM).toString();
             }
             //else set the time to the alarm time and change color of fabs accordingly
             else {
@@ -247,8 +243,10 @@ public class NewAlarmActivity extends AppCompatActivity {
                 }
                 alarmRingtone = intent.getStringExtra(AlarmEntry.RINGTONE);
                 ringtone.setText(alarmRingtone);
-                ringtoneUri = Uri.parse(intent.getStringExtra(AlarmEntry.RINGTONE_URI));
-
+                ringtoneUri = intent.getStringExtra(AlarmEntry.RINGTONE_URI);
+                int vibrate = intent.getIntExtra(AlarmEntry.VIBRATE, -1);
+                if (vibrate == 1) vib = true;
+                else vib = false;
             }
 
 
@@ -350,9 +348,8 @@ public class NewAlarmActivity extends AppCompatActivity {
 
                                 Intent data = result.getData();
                                 alarmRingtone = data.getStringExtra(AlarmEntry.RINGTONE);
-                                ringtoneUri = Uri.parse(data.getStringExtra(AlarmEntry.RINGTONE_URI));
+                                ringtoneUri = data.getStringExtra(AlarmEntry.RINGTONE_URI);
                                 ringtone.setText(alarmRingtone);
-
 
 
                             }
@@ -461,7 +458,11 @@ public class NewAlarmActivity extends AppCompatActivity {
                 contentValues.put(AlarmEntry.FRIDAY, 0);
                 contentValues.put(AlarmEntry.SATURDAY, 0);
                 contentValues.put(AlarmEntry.RINGTONE, alarmRingtone);
-                contentValues.put(AlarmEntry.RINGTONE_URI, ringtoneUri.toString());
+                contentValues.put(AlarmEntry.RINGTONE_URI, ringtoneUri);
+
+                if (vib) contentValues.put(AlarmEntry.VIBRATE, AlarmEntry.VIBRATE_ON);
+                else contentValues.put(AlarmEntry.VIBRATE, AlarmEntry.VIBRATE_OFF);
+
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
@@ -554,7 +555,7 @@ public class NewAlarmActivity extends AppCompatActivity {
                     i.putExtra(AlarmEntry.HOUR, Integer.parseInt(hour));
                     i.putExtra(AlarmEntry.MIN, Integer.parseInt(min));
                     i.putExtra(AlarmEntry._ID, id);
-                    i.putExtra(AlarmEntry.RINGTONE_URI, ringtoneUri.toString());
+                    i.putExtra(AlarmEntry.RINGTONE_URI, ringtoneUri);
 
 
                     PendingIntent pendingIntent = PendingIntent.getActivity(this, id, i, 0);
@@ -690,4 +691,9 @@ public class NewAlarmActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.v("", "back pressed");
+        super.onBackPressed();
+    }
 }

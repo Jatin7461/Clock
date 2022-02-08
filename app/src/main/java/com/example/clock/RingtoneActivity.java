@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -41,12 +42,15 @@ public class RingtoneActivity extends AppCompatActivity implements LoaderManager
     Intent intent;
     String alarmRingtone;
     int intentCode;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ringtone);
         try {
+
+            progressBar = findViewById(R.id.loading_ringtones);
             map = new HashMap<>();
             list = new ArrayList<>();
             ringtoneList = findViewById(R.id.ringtone_list);
@@ -89,7 +93,7 @@ public class RingtoneActivity extends AppCompatActivity implements LoaderManager
 //            if (intentCode != -1)
 //                r = RingtoneManager.getRingtone(this, Uri.parse(map.get(alarmRingtone)));
 
-//            map.put("None", "");
+            map.put("None", "");
 
             adapter = new RingtoneAdapter(this, list, selected, map);
             ringtoneList.setAdapter(adapter);
@@ -110,6 +114,9 @@ public class RingtoneActivity extends AppCompatActivity implements LoaderManager
                         TextView song = view.findViewById(R.id.ringtone_name);
                         String uri = map.get(song.getText().toString());
                         intent.putExtra("id", R.id.ringtone_selected);
+//                        if (song.getText().toString().equals("None"))
+//                            intent.putExtra("ringtone", "None");
+//                        else
                         intent.putExtra("ringtone", uri);
                         Intent in = new Intent();
                         in.putExtra(AlarmContract.AlarmEntry.RINGTONE_URI, (map.get(song.getText().toString())));
@@ -150,14 +157,33 @@ public class RingtoneActivity extends AppCompatActivity implements LoaderManager
         super.onPause();
         Intent intent = new Intent(RingtoneActivity.this, AlarmService.class);
         stopService(intent);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressBar.setVisibility(View.INVISIBLE);
+    }
 
     @NonNull
     @Override
     public Loader<List<String>> onCreateLoader(int id, @Nullable Bundle args) {
 
         AsyncTaskLoader<List<String>> asyncTaskLoader = new AsyncTaskLoader<List<String>>(this) {
+            @Override
+            protected void onStartLoading() {
+                progressBar.setVisibility(View.VISIBLE);
+                super.onStartLoading();
+            }
+
+            @Override
+            protected void onStopLoading() {
+
+//                progressBar.setVisibility(View.INVISIBLE);
+                super.onStopLoading();
+            }
+
             @Nullable
             @Override
             public List<String> loadInBackground() {
@@ -189,14 +215,17 @@ public class RingtoneActivity extends AppCompatActivity implements LoaderManager
                     list.add(notificationTitle);
                     map.put(notificationTitle, notificationUri);
                 }
+//                progressBar.setVisibility(View.INVISIBLE);
                 return list;
             }
         };
+
         return asyncTaskLoader;
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<String>> loader, List<String> data) {
+        progressBar.setVisibility(View.INVISIBLE);
         adapter.updateList(data);
     }
 
@@ -204,4 +233,6 @@ public class RingtoneActivity extends AppCompatActivity implements LoaderManager
     public void onLoaderReset(@NonNull Loader<List<String>> loader) {
 
     }
+
+
 }
