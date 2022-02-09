@@ -66,7 +66,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     Handler handler;
     Runnable runnable;
     float dY;
-    private int snooze;
+    private int snooze, snoozeTime;
     int id;
 
     @Override
@@ -80,7 +80,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
                 if (view.getY() < -200) {
                     view.animate().translationY(-500);
                     handler.removeCallbacks(runnable);
-
                     finish();
                 }
                 if (event.getRawY() + dY < 0) {
@@ -98,6 +97,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_POWER) {
+            snoozeAlarm(id,snoozeTime);
             finish();
             return true;
         }
@@ -126,7 +126,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         Cursor cursor;
         Uri alarmUri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
         String[] projection = {AlarmContract.AlarmEntry.HOUR, AlarmContract.AlarmEntry.MIN,
-                AlarmContract.AlarmEntry.RINGTONE_URI, AlarmContract.AlarmEntry.VIBRATE, AlarmContract.AlarmEntry.SNOOZE};
+                AlarmContract.AlarmEntry.RINGTONE_URI, AlarmContract.AlarmEntry.VIBRATE, AlarmContract.AlarmEntry.SNOOZE, AlarmEntry.SNOOZE_TIME};
         cursor = getContentResolver().query(alarmUri, projection, null, null, null);
         cursor.moveToFirst();
         int hourId = cursor.getColumnIndex(AlarmContract.AlarmEntry.HOUR);
@@ -143,6 +143,10 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
         int snoozeId = cursor.getColumnIndex(AlarmEntry.SNOOZE);
         snooze = cursor.getInt(snoozeId);
+
+        int snoozeTimeId = cursor.getColumnIndex(AlarmEntry.SNOOZE_TIME);
+        snoozeTime = cursor.getInt(snoozeTimeId);
+
 
         Calendar calendar1 = Calendar.getInstance();
         int dayNumber = calendar1.get(Calendar.DAY_OF_WEEK);
@@ -254,7 +258,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
             public void run() {
 
                 if (snooze < 5) {
-                    snoozeAlarm(id);
+                    snoozeAlarm(id, snoozeTime);
                 } else {
                     updateSnooze(id);
                 }
@@ -263,7 +267,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
             }
         };
         handler = new Handler();
-        handler.postDelayed(runnable, 45000);
+        handler.postDelayed(runnable, 30000);
 
     }
 
@@ -421,7 +425,9 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         }
     }
 
-    private void snoozeAlarm(int id) {
+    private void snoozeAlarm(int id, int snoozeTime) {
+
+
         ContentValues contentValues = new ContentValues();
         Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
         contentValues.put(AlarmEntry.SNOOZE, snooze + 1);
@@ -432,10 +438,11 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
         intent.putExtra(AlarmEntry._ID, id);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), id, intent, 0);
+        Log.v("", "interval " + snoozeTime);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 300000, pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pendingIntent);
         } else
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 300000, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pendingIntent);
     }
 
     private void updateSnooze(int id) {

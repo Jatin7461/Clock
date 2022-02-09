@@ -191,7 +191,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String time = t.getText().toString();
                 Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, l);
                 String projection[] = {AlarmEntry.SUNDAY, AlarmEntry.MONDAY, AlarmEntry.TUESDAY, AlarmEntry.WEDNESDAY,
-                        AlarmEntry.THURSDAY, AlarmEntry.FRIDAY, AlarmEntry.SATURDAY, AlarmEntry.RINGTONE, AlarmEntry.RINGTONE_URI, AlarmEntry.VIBRATE};
+                        AlarmEntry.THURSDAY, AlarmEntry.FRIDAY, AlarmEntry.SATURDAY, AlarmEntry.RINGTONE, AlarmEntry.RINGTONE_URI, AlarmEntry.VIBRATE,
+                        AlarmEntry.SNOOZE_TIME};
                 Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
                 cursor.moveToFirst();
                 int sunId = cursor.getColumnIndex(AlarmContract.AlarmEntry.SUNDAY);
@@ -224,6 +225,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 int vibrateId = cursor.getColumnIndex(AlarmEntry.VIBRATE);
                 int vibrate = cursor.getInt(vibrateId);
 
+                int snoozeId = cursor.getColumnIndex(AlarmEntry.SNOOZE_TIME);
+                int snoozeTime = cursor.getInt(snoozeId);
+
                 bundle.putString(AlarmEntry.TIME, time);
                 intent.putExtra(AlarmEntry._ID, l);
                 intent.putExtra(AlarmEntry.INTENT_BUNDLE, bundle);
@@ -238,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 intent.putExtra(AlarmEntry.RINGTONE, ringtone);
                 intent.putExtra(AlarmEntry.RINGTONE_URI, ringtoneUri);
                 intent.putExtra(AlarmEntry.VIBRATE, vibrate);
+                intent.putExtra(AlarmEntry.SNOOZE_TIME,snoozeTime);
                 startActivity(intent);
             }
         });

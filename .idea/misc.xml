@@ -13,6 +13,7 @@
         <entry key="..\:/Clock/app/src/main/res/layout/alarms.xml" value="0.5" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_alarm.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_delete_alarm.xml" value="0.209375" />
+        <entry key="..\:/Clock/app/src/main/res/layout/fragment_snooze.xml" value="0.25" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_stopwatch.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_swipe_alarm.xml" value="0.22" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_timer.xml" value="0.209375" />

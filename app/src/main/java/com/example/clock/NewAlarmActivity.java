@@ -7,8 +7,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.clock.Fragments.SnoozeFragment;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +40,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -55,7 +59,7 @@ import java.util.Date;
 import java.util.Map;
 
 
-public class NewAlarmActivity extends AppCompatActivity {
+public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragment.SnoozeTimeHelper {
 
 
     boolean alarmChanged = false;
@@ -73,6 +77,8 @@ public class NewAlarmActivity extends AppCompatActivity {
     private final int DAY = 24 * 60 * 60 * 1000;
     final String TAG = NewAlarmActivity.class.getName();
 
+    LinearLayout snoozeLayout;
+
     int hoursPosition, minutePosition;
 
     private ArrayList<String> hoursList;
@@ -89,8 +95,18 @@ public class NewAlarmActivity extends AppCompatActivity {
     //    private final int LOADER_ID = 1;
     private String alarmRingtone;
     private String ringtoneUri;
+    LinearLayout ringtoneActivity;
 
-    TextView ringtone, vibrate;
+    private int snoozeTime = -1;
+    TextView ringtone, vibrate, snooze;
+
+
+    @Override
+    public void getSnoozeInterval(int time) {
+        snoozeTime = time;
+        setSnoozeTime(snoozeTime);
+        Log.v("", "time interval b/w snooze is " + time);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +117,11 @@ public class NewAlarmActivity extends AppCompatActivity {
 
 
             alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            ringtone = findViewById(R.id.ringtone);
+            ringtone = findViewById(R.id.name_of_ringtone);
+
+            snoozeLayout = findViewById(R.id.snooze);
+
+            ringtoneActivity = findViewById(R.id.ringtone);
 
             intent = getIntent();
             intentCode = intent.getIntExtra(AlarmContract.AlarmEntry.EDIT_ALARM, -1);
@@ -120,6 +140,7 @@ public class NewAlarmActivity extends AppCompatActivity {
             friday = findViewById(R.id.friday);
             saturday = findViewById(R.id.saturday);
 
+            snooze = findViewById(R.id.snooze_time);
 
             RingtoneManager manager = new RingtoneManager(this);
             manager.setType(RingtoneManager.TYPE_ALARM);
@@ -247,6 +268,10 @@ public class NewAlarmActivity extends AppCompatActivity {
                 int vibrate = intent.getIntExtra(AlarmEntry.VIBRATE, -1);
                 if (vibrate == 1) vib = true;
                 else vib = false;
+
+                snoozeTime = intent.getIntExtra(AlarmEntry.SNOOZE_TIME, -1);
+                setSnoozeTime(snoozeTime);
+
             }
 
 
@@ -355,7 +380,7 @@ public class NewAlarmActivity extends AppCompatActivity {
                             }
                         }
                     });
-            ringtone.setOnClickListener(new View.OnClickListener() {
+            ringtoneActivity.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent ringIntent = new Intent(NewAlarmActivity.this, RingtoneActivity.class);
@@ -384,9 +409,30 @@ public class NewAlarmActivity extends AppCompatActivity {
                 }
             });
 
+
+            snoozeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Fragment snoozeFragment = new SnoozeFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(AlarmEntry.EDIT_ALARM, intentCode);
+                    if (intentCode != -1)
+                        snoozeTime = intent.getIntExtra(AlarmEntry.SNOOZE_TIME, -1);
+                    bundle.putInt(AlarmEntry.SNOOZE_TIME, snoozeTime);
+
+                    snoozeFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
+                            android.R.animator.fade_in, android.R.animator.fade_out).add(R.id.snooze_fragment, snoozeFragment).addToBackStack("snooze").commit();
+
+                    Log.v("", "fragment");
+
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private void setVibration() {
@@ -459,6 +505,8 @@ public class NewAlarmActivity extends AppCompatActivity {
                 contentValues.put(AlarmEntry.SATURDAY, 0);
                 contentValues.put(AlarmEntry.RINGTONE, alarmRingtone);
                 contentValues.put(AlarmEntry.RINGTONE_URI, ringtoneUri);
+                contentValues.put(AlarmEntry.SNOOZE_TIME, snoozeTime);
+
 
                 if (vib) contentValues.put(AlarmEntry.VIBRATE, AlarmEntry.VIBRATE_ON);
                 else contentValues.put(AlarmEntry.VIBRATE, AlarmEntry.VIBRATE_OFF);
@@ -696,4 +744,28 @@ public class NewAlarmActivity extends AppCompatActivity {
         Log.v("", "back pressed");
         super.onBackPressed();
     }
+
+    private void setSnoozeTime(int snoozeTime) {
+//        int snoozeTime = intent.getIntExtra(AlarmEntry.SNOOZE_TIME, -1);
+        switch (snoozeTime) {
+            case AlarmEntry.FIVE_MINUTES:
+                snooze.setText(getResources().getString(R.string.minutes_five));
+                break;
+            case AlarmEntry.TEN_MINUTES:
+                snooze.setText(getResources().getString(R.string.minutes_ten));
+                break;
+            case AlarmEntry.FIFTEEN_MINUTES:
+                snooze.setText(getResources().getString(R.string.minutes_fifteen));
+                break;
+            case AlarmEntry.THIRTY_MINUTES:
+                snooze.setText(getResources().getString(R.string.minutes_thirty));
+                break;
+            default:
+                break;
+
+
+        }
+    }
+
+
 }

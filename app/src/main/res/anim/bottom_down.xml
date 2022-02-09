@@ -5,7 +5,7 @@
         android:toYDelta="100%p"
         android:fillAfter="true"
         android:interpolator="@android:anim/linear_interpolator"
-        android:duration="500" />
+        android:duration="250" />
 
 <!--    <translate xmlns:android="http://schemas.android.com/apk/res/android"-->
 <!--        android:duration="@android:integer/config_longAnimTime"-->

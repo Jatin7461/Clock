@@ -217,26 +217,49 @@
                 app:layout_constraintStart_toStartOf="@+id/saturday"
                 app:layout_constraintTop_toTopOf="@+id/saturday" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/ringtone"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:gravity="center|left"
-                android:text="Ringtone"
-                android:textSize="24sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/sunday"
                 app:layout_constraintTop_toBottomOf="@+id/wednesday"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintVertical_bias="0.05">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center|left"
+                    android:text="Ringtone"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/name_of_ringtone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="ringtone"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/vibrate"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
+                android:layout_marginLeft="16dp"
+                android:fontFamily="sans-serif-thin"
                 android:gravity="center|left"
                 android:text="Vibrate"
-                android:textSize="24sp"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/ringtone"
                 app:layout_constraintTop_toBottomOf="@+id/ringtone" />
@@ -250,6 +273,33 @@
                 app:layout_constraintEnd_toEndOf="@+id/vibrate"
                 app:layout_constraintTop_toTopOf="@+id/vibrate" />
 
+            <LinearLayout
+                android:id="@+id/snooze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/vibrate"
+                app:layout_constraintTop_toBottomOf="@+id/vibrate">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center|left"
+                    android:text="Snooze Time"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/snooze_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="5 Minutes" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -266,6 +316,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/minutes_list" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/snooze_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
 
 
 </FrameLayout>

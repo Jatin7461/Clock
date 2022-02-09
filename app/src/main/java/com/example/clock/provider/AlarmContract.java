@@ -33,6 +33,7 @@ public class AlarmContract {
         public static final String RINGTONE_URI = "ringtoneuri";
         public static final String VIBRATE = "vibrate";
         public static final String SNOOZE = "snooze";
+        public static final String SNOOZE_TIME = "snoozetime";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + _ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + TIME + " INTEGER NOT NULL, " +
@@ -40,7 +41,7 @@ public class AlarmContract {
                 + MONDAY + " INTEGER NOT NULL DEFAULT 0, " + TUESDAY + " INTEGER NOT NULL DEFAULT 0, " + WEDNESDAY
                 + " INTEGER NOT NULL DEFAULT 0, " + THURSDAY + " INTEGER NOT NULL DEFAULT 0, " + FRIDAY + " INTEGER NOT NULL DEFAULT 0, "
                 + SATURDAY + " INTEGER NOT NULL DEFAULT 0, " + RINGTONE + " TEXT, " + RINGTONE_URI + " TEXT, " + VIBRATE + " INTEGER, "
-                + SNOOZE + " INTEGER NOT NULL DEFAULT 0, " + LABEL + " TEXT )";
+                + SNOOZE + " INTEGER NOT NULL DEFAULT 0, " + SNOOZE_TIME + " INTEGER NOT NULL DEFAULT 5, " + LABEL + " TEXT )";
 
         public static final int SELECTED = 1;
         public static final int NOT_SELECTED = 0;
@@ -54,5 +55,12 @@ public class AlarmContract {
         public static final String INTENT_BUNDLE = "bundle";
         public static final String EDIT_ALARM = "edit";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_AUTHORITY, PATH_ALARMS);
+
+
+        public static final int FIVE_MINUTES = 5;
+        public static final int TEN_MINUTES = 10;
+        public static final int FIFTEEN_MINUTES = 15;
+        public static final int THIRTY_MINUTES = 30;
+
     }
 }

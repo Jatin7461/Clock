@@ -4,7 +4,7 @@
         android:fromYDelta="75%p"
         android:toYDelta="0%p"
         android:fillAfter="true"
-        android:duration="500" />
+        android:duration="250" />
 <!--    <translate xmlns:android="http://schemas.android.com/apk/res/android"-->
 <!--        android:duration="@android:integer/config_longAnimTime"-->
 <!--        android:fromYDelta="100%"-->
