@@ -68,6 +68,9 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     float dY;
     private int snooze, snoozeTime;
     int id;
+    String notificationHour;
+    String notificationMin;
+    private final String SNOOZED_STATE = "snoozedState";
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -80,6 +83,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
                 if (view.getY() < -200) {
                     view.animate().translationY(-500);
                     handler.removeCallbacks(runnable);
+                    updateSnooze(id);
                     finish();
                 }
                 if (event.getRawY() + dY < 0) {
@@ -97,7 +101,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_POWER) {
-            snoozeAlarm(id,snoozeTime);
+            snoozeAlarm(id, snoozeTime, Integer.parseInt(notificationHour), Integer.parseInt(notificationMin));
             finish();
             return true;
         }
@@ -171,6 +175,12 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         } else {
             day.setText(getResources().getString(R.string.day7));
         }
+
+        if (intent.getBooleanExtra(SNOOZED_STATE, false)) {
+            hour = intent.getIntExtra(AlarmEntry.HOUR, -1);
+            min = intent.getIntExtra(AlarmEntry.MIN, -1);
+        }
+
         String h = String.format("%02d", hour);
         String m = String.format("%02d", min);
 
@@ -207,14 +217,29 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
             r.setAudioAttributes(audioAttributes);
             r.play();
         }
-        NotificationCompat.Builder build = new NotificationCompat.Builder(this, "hello")
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("alarm snoozed")
-                .setContentText("alarm snoozed for 5 minutes")
-                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher_background))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
+        Calendar snoozeCalendar = Calendar.getInstance();
+        snoozeCalendar.set(Calendar.HOUR_OF_DAY, hour);
+        snoozeCalendar.set(Calendar.MINUTE, min);
+
+        long alarmTime = snoozeCalendar.getTimeInMillis();
+        alarmTime += snoozeTime * 60000;
+        snoozeCalendar.setTimeInMillis(alarmTime);
+        notificationHour = String.format("%02d", snoozeCalendar.get(Calendar.HOUR_OF_DAY));
+        notificationMin = String.format("%02d", snoozeCalendar.get(Calendar.MINUTE));
+
+
+        Intent intent1 = new Intent(this, MyWork.class);
+        intent1.putExtra(AlarmEntry._ID, id);
+        PendingIntent notificationIntent = PendingIntent.getService(this, id + 10000, intent1, 0);
+        NotificationCompat.Builder build = new NotificationCompat.Builder(this, AlarmEntry.TABLE_NAME + id)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("Alarm (Snoozed)")
+                .setContentText("Alarm set for " + notificationHour + ":" + notificationMin + ", tap to cancel.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(notificationIntent)
+                .setAutoCancel(true);
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
 
@@ -258,17 +283,18 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
             public void run() {
 
                 if (snooze < 5) {
-                    snoozeAlarm(id, snoozeTime);
+                    snoozeAlarm(id, snoozeTime, Integer.parseInt(notificationHour), Integer.parseInt(notificationMin));
                 } else {
                     updateSnooze(id);
                 }
-                manager.notify(1, build.build());
+                manager.notify(id, build.build());
                 finish();
             }
         };
         handler = new Handler();
-        handler.postDelayed(runnable, 30000);
+        handler.postDelayed(runnable, 5000);
 
+        cursor.close();
     }
 
     @Override
@@ -286,77 +312,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         vibrateAlarm(vibrate);
     }
 
-    //    //    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        int action = event.getActionMasked();
-//        if (action == MotionEvent.ACTION_BUTTON_PRESS) {
-//            Log.v(TAG, "tapping");
-//        } else if (action == MotionEvent.ACTION_SCROLL) {
-//            Log.v(TAG, "swiping");
-//            finish();
-//            return true;
-//        }
-////        if(action == MotionEvent.ACTION_MOVE){
-////
-////        }
-//        else {
-//            Log.v(TAG, "nothing done");
-//
-//        }
-//
-//        return false;
-//    }
-
-
-//    public class OnSwipeTouchListener implements View.OnTouchListener {
-//        private final GestureDetector gestureDetector;
-//        Context context;
-//
-//        OnSwipeTouchListener(Context ctx, View mainView) {
-//            gestureDetector = new GestureDetector(ctx, new GestureListener());
-//            mainView.setOnTouchListener(this);
-//            context = ctx;
-//        }
-//
-//        @Override
-//        public boolean onTouch(View v, MotionEvent event) {
-//            return gestureDetector.onTouchEvent(event);
-//        }
-//
-//        public class GestureListener extends
-//                GestureDetector.SimpleOnGestureListener {
-//            private static final int SWIPE_THRESHOLD = 100;
-//            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-//
-//            @Override
-//            public boolean onDown(MotionEvent e) {
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//                boolean result = false;
-//                try {
-//                    float diffY = e2.getY() - e1.getY();
-//
-//                    if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-//                        if (diffY > 0) {
-//
-//                        } else {
-//
-//                            finish();
-//                        }
-//                        result = true;
-//                    }
-//                } catch (Exception exception) {
-//                    exception.printStackTrace();
-//                }
-//                return result;
-//            }
-//        }
-//
-//
-//    }
 
     //method to set today's date
     private void setDate() {
@@ -425,9 +380,10 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
         }
     }
 
-    private void snoozeAlarm(int id, int snoozeTime) {
+    private void snoozeAlarm(int id, int snoozeTime, int hour, int min) {
 
 
+        snoozeTime *= 60000;
         ContentValues contentValues = new ContentValues();
         Uri uri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
         contentValues.put(AlarmEntry.SNOOZE, snooze + 1);
@@ -436,13 +392,27 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
+        intent.putExtra(SNOOZED_STATE, true);
+        intent.putExtra(AlarmEntry.HOUR, hour);
+        intent.putExtra(AlarmEntry.MIN, min);
         intent.putExtra(AlarmEntry._ID, id);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), id, intent, 0);
         Log.v("", "interval " + snoozeTime);
+        Log.v("", "total snooze " + snooze);
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, hour);
+//        calendar.set(Calendar.MINUTE, min);
+//        long calendarTime = calendar.getTimeInMillis();
+//        if (System.currentTimeMillis() > calendarTime) calendarTime += DAY;
+//        else
+//            calendarTime += snoozeTime;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pendingIntent);
         } else
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pendingIntent);
+
+//        Toast.makeText(this, "Alarm snoozed for " + snoozeTime + " minutes", Toast.LENGTH_SHORT).show();
     }
 
     private void updateSnooze(int id) {

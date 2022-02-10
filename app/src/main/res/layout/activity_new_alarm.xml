@@ -18,7 +18,7 @@
             android:id="@+id/hours_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
 
             android:background="@color/purple_200"
 
@@ -32,7 +32,7 @@
             android:id="@+id/minutes_list"
             android:layout_width="0dp"
             android:layout_height="255dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@color/teal_200"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -231,9 +231,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:fontFamily="sans-serif-thin"
-                    android:gravity="center|left"
+                    android:gravity="center|start"
                     android:text="Ringtone"
                     android:textColor="@color/black"
                     android:textSize="20sp"
@@ -243,7 +243,7 @@
                     android:id="@+id/name_of_ringtone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:text="ringtone"
                     android:textSize="16sp" />
 
@@ -253,9 +253,9 @@
                 android:id="@+id/vibrate"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:fontFamily="sans-serif-thin"
-                android:gravity="center|left"
+                android:gravity="center|start"
                 android:text="Vibrate"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -285,9 +285,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:fontFamily="sans-serif-thin"
-                    android:gravity="center|left"
+                    android:gravity="center|start"
                     android:text="Snooze Time"
                     android:textColor="@color/black"
                     android:textSize="20sp"
@@ -297,9 +297,43 @@
                     android:id="@+id/snooze_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:text="5 Minutes" />
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/snooze">
+
+
+                <TextView
+
+                    android:id="@+id/label_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:text="@string/label"
+                    android:textColor="@color/black"
+
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/label_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="label"
+
+                    />
+
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

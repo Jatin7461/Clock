@@ -2,16 +2,19 @@ package com.example.clock;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
@@ -22,56 +25,36 @@ import com.example.clock.provider.AlarmContract;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-public class MyWork extends Worker {
+public class MyWork extends Service {
 
-    AlarmManager alarmManager;
 
-    public MyWork(Context context, WorkerParameters parameters) {
-        super(context, parameters);
-
-        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-    }
-
-    @NonNull
     @Override
-    public Result doWork() {
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-        try {
-
-            //get input data
-            int hour = getInputData().getInt(AlarmContract.AlarmEntry.HOUR, -1);
-            int min = getInputData().getInt(AlarmContract.AlarmEntry.MIN, -1);
-            if (hour == -1 || min == -1) {
-                Toast.makeText(getApplicationContext(), "invalid time", Toast.LENGTH_SHORT).show();
-                Result.failure();
-            }
-            int code = getInputData().getInt(AlarmContract.AlarmEntry.PENDING, 0);
-            int id = getInputData().getInt(AlarmContract.AlarmEntry._ID, -1);
-            int requestCode = getInputData().getInt(AlarmContract.AlarmEntry.REQUEST_CODE, -1);
-            boolean multiple = getInputData().getBoolean("multiple", false);
+        int id = intent.getIntExtra(AlarmContract.AlarmEntry._ID, -1);
 
 
-            //set intent and put data
-            Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
-            intent.putExtra(AlarmContract.AlarmEntry._ID, code);
-            intent.putExtra(AlarmContract.AlarmEntry.HOUR, hour);
-            intent.putExtra(AlarmContract.AlarmEntry.MIN, min);
-            intent.putExtra(AlarmContract.AlarmEntry.REQUEST_CODE, requestCode);
-            intent.putExtra("multiple", multiple);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(AlarmContract.AlarmEntry.SNOOZE, 0);
+        Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
 
-            //fire the alarm
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), code, intent, 0);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
 
-            WorkManager.getInstance(getApplicationContext()).cancelUniqueWork(AlarmContract.AlarmEntry.TABLE_NAME + id);
+        Intent i = new Intent(getApplicationContext(), AlarmActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), id, i, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
 
-            return Result.success();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure();
-        }
+
+        getContentResolver().update(uri, contentValues, null, null);
+
+        return START_NOT_STICKY;
+
     }
 
-
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 }

@@ -77,7 +77,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
     private final int DAY = 24 * 60 * 60 * 1000;
     final String TAG = NewAlarmActivity.class.getName();
 
-    LinearLayout snoozeLayout;
+    LinearLayout snoozeLayout, label;
 
     int hoursPosition, minutePosition;
 
@@ -120,7 +120,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
             ringtone = findViewById(R.id.name_of_ringtone);
 
             snoozeLayout = findViewById(R.id.snooze);
-
+            label = findViewById(R.id.label);
             ringtoneActivity = findViewById(R.id.ringtone);
 
             intent = getIntent();
@@ -225,6 +225,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
             if (intentCode == -1) {
                 getSupportActionBar().setTitle(R.string.add_alarm);
                 ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM).toString();
+                snoozeTime = 5;
             }
             //else set the time to the alarm time and change color of fabs accordingly
             else {
@@ -429,6 +430,14 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
                 }
             });
+
+
+            label.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -600,8 +609,8 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                     //data for work request
                     Intent i = new Intent(NewAlarmActivity.this, AlarmActivity.class);
 
-                    i.putExtra(AlarmEntry.HOUR, Integer.parseInt(hour));
-                    i.putExtra(AlarmEntry.MIN, Integer.parseInt(min));
+//                    i.putExtra(AlarmEntry.HOUR, Integer.parseInt(hour));
+//                    i.putExtra(AlarmEntry.MIN, Integer.parseInt(min));
                     i.putExtra(AlarmEntry._ID, id);
                     i.putExtra(AlarmEntry.RINGTONE_URI, ringtoneUri);
 
@@ -711,8 +720,8 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
     private void setRepeatingAlarm(int requestCode, int hour, int min, int id) {
         Intent i = new Intent(NewAlarmActivity.this, AlarmActivity.class);
-        i.putExtra(AlarmEntry.HOUR, hour);
-        i.putExtra(AlarmEntry.MIN, min);
+//        i.putExtra(AlarmEntry.HOUR, hour);
+//        i.putExtra(AlarmEntry.MIN, min);
         i.putExtra(AlarmEntry._ID, id);
         i.putExtra("multiple", true);
         i.putExtra(AlarmEntry.REQUEST_CODE, requestCode);

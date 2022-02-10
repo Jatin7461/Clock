@@ -8,7 +8,7 @@
         <entry key="..\:/Clock/app/src/main/res/layout/activity_alarm.xml" value="0.25" />
         <entry key="..\:/Clock/app/src/main/res/layout/activity_delete_alarm.xml" value="0.1953125" />
         <entry key="..\:/Clock/app/src/main/res/layout/activity_main.xml" value="0.22" />
-        <entry key="..\:/Clock/app/src/main/res/layout/activity_new_alarm.xml" value="0.33" />
+        <entry key="..\:/Clock/app/src/main/res/layout/activity_new_alarm.xml" value="0.22" />
         <entry key="..\:/Clock/app/src/main/res/layout/activity_ringtone.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/alarms.xml" value="0.5" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_alarm.xml" value="0.209375" />
@@ -16,6 +16,7 @@
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_snooze.xml" value="0.25" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_stopwatch.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_swipe_alarm.xml" value="0.22" />
+        <entry key="..\:/Clock/app/src/main/res/layout/fragment_text_box_dialog.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/fragment_timer.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/number.xml" value="0.209375" />
         <entry key="..\:/Clock/app/src/main/res/layout/ringtone_list.xml" value="0.22" />

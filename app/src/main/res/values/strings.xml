@@ -46,6 +46,6 @@
     <string name="minutes_ten">10 Minutes</string>
     <string name="minutes_fifteen">15 Minutes</string>
     <string name="minutes_thirty">30 Minutes</string>
-
+    <string name="label">Label</string>
 
 </resources>
