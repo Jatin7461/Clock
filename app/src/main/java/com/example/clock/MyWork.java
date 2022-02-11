@@ -37,6 +37,7 @@ public class MyWork extends Service {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(AlarmContract.AlarmEntry.SNOOZE, 0);
+        contentValues.put(AlarmContract.AlarmEntry.ACTIVE, AlarmContract.AlarmEntry.ALARM_INACTIVE);
         Uri uri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CONTENT_URI, id);
 
 

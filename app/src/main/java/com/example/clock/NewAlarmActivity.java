@@ -8,9 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clock.Fragments.SnoozeFragment;
+import com.example.clock.Fragments.TextBoxDialog;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -40,6 +42,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -59,7 +63,7 @@ import java.util.Date;
 import java.util.Map;
 
 
-public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragment.SnoozeTimeHelper {
+public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragment.SnoozeTimeHelper, TextBoxDialog.DialogMessage {
 
 
     boolean alarmChanged = false;
@@ -79,6 +83,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
     LinearLayout snoozeLayout, label;
 
+    private TextView hoverHour, hoverMin;
     int hoursPosition, minutePosition;
 
     private ArrayList<String> hoursList;
@@ -98,7 +103,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
     LinearLayout ringtoneActivity;
 
     private int snoozeTime = -1;
-    TextView ringtone, vibrate, snooze;
+    TextView ringtone, vibrate, snooze, labelText;
 
 
     @Override
@@ -121,6 +126,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
             snoozeLayout = findViewById(R.id.snooze);
             label = findViewById(R.id.label);
+            labelText = findViewById(R.id.label_text);
             ringtoneActivity = findViewById(R.id.ringtone);
 
             intent = getIntent();
@@ -141,6 +147,28 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
             saturday = findViewById(R.id.saturday);
 
             snooze = findViewById(R.id.snooze_time);
+
+            hoverHour = findViewById(R.id.hover_hours);
+
+            hoverHour.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int location[] = new int[2];
+                    hoverHour.getLocationOnScreen(location);
+                    Log.v(TAG, "x " + location[0] + " Y " + location[1]);
+
+                }
+            });
+
+            hoverMin = findViewById(R.id.hover_min);
+
+            hoverMin.setOnClickListener((View view) -> {
+                int location[] = new int[2];
+                hoverMin.getLocationOnScreen(location);
+                Log.v(TAG, "x " + location[0] + " Y " + location[1]);
+
+            });
+
 
             RingtoneManager manager = new RingtoneManager(this);
             manager.setType(RingtoneManager.TYPE_ALARM);
@@ -176,7 +204,6 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
             LinearLayoutManager hoursLayoutManager = new LinearLayoutManager(this);
             hoursRecyclerView = findViewById(R.id.hours_list);
             final LinearSnapHelper hoursSnap = new LinearSnapHelper();
-            hoursSnap.attachToRecyclerView(hoursRecyclerView);
             hoursRecyclerView.setLayoutManager(hoursLayoutManager);
             hoursAdapter = new NumberAdapter(hoursList);
             hoursRecyclerView.setAdapter(hoursAdapter);
@@ -201,12 +228,15 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    minutesSnap.attachToRecyclerView(minutesRecyclerView);
                     super.onScrolled(recyclerView, dx, dy);
+                    minutesSnap.attachToRecyclerView(minutesRecyclerView);
                     //Some code while the list is scrolling
                     LinearLayoutManager lManager = (LinearLayoutManager) minutesRecyclerView.getLayoutManager();
                     int firstElementPosition = lManager.findFirstVisibleItemPosition();
-                    hoursPosition = firstElementPosition;
+                    minutePosition = firstElementPosition;
+                    Log.v(TAG, "minutes view dx " + dx + " dy " + dy);
+
+
                 }
             });
 
@@ -214,9 +244,18 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
+                    hoursSnap.attachToRecyclerView(hoursRecyclerView);
 
                     LinearLayoutManager linearLayoutManager = (LinearLayoutManager) hoursRecyclerView.getLayoutManager();
-                    minutePosition = linearLayoutManager.findFirstVisibleItemPosition();
+                    hoursPosition = linearLayoutManager.findFirstVisibleItemPosition();
+                    RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
+                    int location[] = new int[2];
+                    viewHolder.itemView.getLocationOnScreen(location);
+                    Log.v(TAG, "view holder location x " + location[0] + " y " + location[1]);
+//                    int pos = linearLayoutManager.findLastVisibleItemPosition();
+//                    RecyclerView.ViewHolder viewHolder1 = hoursRecyclerView.findViewHolderForAdapterPosition(pos - 2);
+//                    viewHolder1.itemView.setBackgroundColor(getResources().getColor(R.color.white));
+
                 }
             });
 
@@ -270,6 +309,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 if (vibrate == 1) vib = true;
                 else vib = false;
 
+                labelText.setText(intent.getStringExtra(AlarmEntry.LABEL));
                 snoozeTime = intent.getIntExtra(AlarmEntry.SNOOZE_TIME, -1);
                 setSnoozeTime(snoozeTime);
 
@@ -435,7 +475,12 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
             label.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    TextBoxDialog textBoxDialog = new TextBoxDialog();
 
+                    textBoxDialog.show(getSupportFragmentManager(), "tag");
+
+
+//                    getSupportFragmentManager().beginTransaction().add(R.id.snooze_fragment, textBoxDialog).addToBackStack("label").commit();
                 }
             });
         } catch (Exception e) {
@@ -489,8 +534,8 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
 
                 //get the position of middle number in hours list and minutes list to select the time for alarm
-                RecyclerView.ViewHolder minViewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
-                RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(minutePosition + 2);
+                RecyclerView.ViewHolder minViewHolder = minutesRecyclerView.findViewHolderForAdapterPosition(minutePosition + 2);
+                RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
 
                 TextView h = viewHolder.itemView.findViewById(R.id.number_list);
                 TextView m = minViewHolder.itemView.findViewById(R.id.number_list);
@@ -515,6 +560,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 contentValues.put(AlarmEntry.RINGTONE, alarmRingtone);
                 contentValues.put(AlarmEntry.RINGTONE_URI, ringtoneUri);
                 contentValues.put(AlarmEntry.SNOOZE_TIME, snoozeTime);
+                contentValues.put(AlarmEntry.LABEL, labelText.getText().toString());
 
 
                 if (vib) contentValues.put(AlarmEntry.VIBRATE, AlarmEntry.VIBRATE_ON);
@@ -777,4 +823,11 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
     }
 
 
+    @Override
+    public void getMessage(DialogFragment dialogFragment) {
+        EditText edit = dialogFragment.getDialog().findViewById(R.id.editText);
+        String text = edit.getText().toString();
+//        Log.v("", "text " + edit.getText().toString());
+        labelText.setText(text);
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.clock.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,8 @@ public class NumberAdapter extends RecyclerView.Adapter<NumberAdapter.NumberAdap
         int realpos = position % list.size();
         String num = list.get(realpos);
         holder.numberView.setText(num);
+
+
     }
 
     @Override
