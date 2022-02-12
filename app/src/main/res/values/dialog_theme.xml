@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="dialog_custom_theme">
+        <item name="background">@color/dark</item>
+    </style>
+
+</resources>

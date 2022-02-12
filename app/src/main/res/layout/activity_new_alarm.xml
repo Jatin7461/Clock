@@ -18,8 +18,8 @@
             android:id="@+id/hours_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@color/purple_200"
-
+            android:background="@color/light_dark"
+            android:fadingEdge="vertical"
             android:paddingStart="40dp"
 
             app:layout_constraintBottom_toBottomOf="@+id/minutes_list"
@@ -32,7 +32,8 @@
             android:id="@+id/minutes_list"
             android:layout_width="0dp"
             android:layout_height="255dp"
-            android:background="@color/teal_200"
+            android:background="@color/light_dark"
+
             android:paddingEnd="40dp"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,8 +44,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
-
             android:layout_height="0dp"
+
+            android:background="@color/dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -53,16 +55,18 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/sunday"
+
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:background="@android:color/transparent"
                 android:backgroundTint="@null"
+
+                android:theme="@style/custom_fab_theme"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/monday"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.1"
+                app:layout_constraintVertical_bias="0.07"
 
                 app:rippleColor="@null" />
 
@@ -72,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
                 android:text="@string/sunday"
+                android:textColor="@color/white"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/sunday"
                 app:layout_constraintEnd_toEndOf="@+id/sunday"
@@ -83,6 +88,8 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:backgroundTint="@null"
+
+                android:theme="@style/custom_fab_theme"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/friday"
@@ -94,7 +101,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
+
                 android:text="@string/monday"
+                android:textColor="@color/white"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/monday"
                 app:layout_constraintEnd_toEndOf="@+id/monday"
@@ -106,6 +115,8 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:backgroundTint="@null"
+
+                android:theme="@style/custom_fab_theme"
                 app:layout_constraintEnd_toStartOf="@+id/thursday"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/tuesday"
@@ -117,7 +128,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
+
                 android:text="@string/tuesday"
+                android:textColor="@color/white"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/tuesday"
                 app:layout_constraintEnd_toEndOf="@+id/tuesday"
@@ -129,6 +142,8 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:backgroundTint="@null"
+
+                android:theme="@style/custom_fab_theme"
                 app:layout_constraintEnd_toStartOf="@+id/wednesday"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/monday"
@@ -141,6 +156,8 @@
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
                 android:text="@string/wednesday"
+
+                android:textColor="@color/white"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/wednesday"
                 app:layout_constraintEnd_toEndOf="@+id/wednesday"
@@ -153,6 +170,8 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:backgroundTint="@null"
+                android:theme="@style/custom_fab_theme"
+
                 app:layout_constraintEnd_toStartOf="@+id/saturday"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/thursday"
@@ -165,6 +184,8 @@
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
                 android:text="@string/thursday"
+
+                android:textColor="@color/white"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/thursday"
                 app:layout_constraintEnd_toEndOf="@+id/thursday"
@@ -176,6 +197,8 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:backgroundTint="@null"
+                android:theme="@style/custom_fab_theme"
+
                 app:layout_constraintEnd_toStartOf="@+id/tuesday"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/sunday"
@@ -188,8 +211,10 @@
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
                 android:text="@string/friday"
+                android:textColor="@color/white"
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/friday"
+
                 app:layout_constraintEnd_toEndOf="@+id/friday"
                 app:layout_constraintStart_toStartOf="@+id/friday"
                 app:layout_constraintTop_toTopOf="@+id/friday" />
@@ -199,6 +224,8 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:backgroundTint="@null"
+
+                android:theme="@style/custom_fab_theme"
                 app:layout_constraintEnd_toStartOf="@+id/friday"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/wednesday"
@@ -211,6 +238,8 @@
                 android:layout_height="wrap_content"
                 android:elevation="12dp"
                 android:text="@string/saturday"
+                android:textColor="@color/white"
+
                 android:textSize="8sp"
                 app:layout_constraintBottom_toBottomOf="@+id/saturday"
                 app:layout_constraintEnd_toEndOf="@+id/saturday"
@@ -222,20 +251,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/vibrate"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/sunday"
-                app:layout_constraintTop_toBottomOf="@+id/wednesday"
+                app:layout_constraintTop_toBottomOf="@+id/sunday"
                 app:layout_constraintVertical_bias="0.05">
 
                 <TextView
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center|start"
                     android:text="Ringtone"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -245,6 +276,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="ringtone"
+                    android:textColor="@color/white"
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -257,10 +289,12 @@
                 android:fontFamily="sans-serif-thin"
                 android:gravity="center|start"
                 android:text="Vibrate"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/snooze"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/ringtone"
                 app:layout_constraintTop_toBottomOf="@+id/ringtone" />
 
@@ -269,6 +303,7 @@
                 android:id="@+id/radioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="@+id/vibrate"
                 app:layout_constraintEnd_toEndOf="@+id/vibrate"
                 app:layout_constraintTop_toTopOf="@+id/vibrate" />
@@ -278,7 +313,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/label"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/vibrate"
                 app:layout_constraintTop_toBottomOf="@+id/vibrate">
 
@@ -289,7 +326,7 @@
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center|start"
                     android:text="Snooze Time"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -298,7 +335,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="5 Minutes" />
+                    android:text="5 Minutes"
+                    android:textColor="@color/white" />
             </LinearLayout>
 
             <LinearLayout
@@ -307,6 +345,7 @@
                 android:layout_height="wrap_content"
 
                 android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/snooze">
 
 
@@ -318,7 +357,7 @@
                     android:layout_marginStart="16dp"
                     android:fontFamily="sans-serif-thin"
                     android:text="@string/label"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
 
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -328,8 +367,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-
-                    />
+                    android:textColor="@color/white" />
 
             </LinearLayout>
 
@@ -341,12 +379,12 @@
             android:layout_height="wrap_content"
             android:background="#33000000"
             android:gravity="end"
-            android:paddingEnd="36dp"
             android:paddingTop="12dp"
+            android:paddingEnd="36dp"
             android:paddingBottom="12dp"
             android:text="H"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/minutes_list"
             app:layout_constraintEnd_toEndOf="@+id/hours_list"
             app:layout_constraintStart_toStartOf="parent"
@@ -362,8 +400,8 @@
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:text="M"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/minutes_list"
             app:layout_constraintEnd_toEndOf="@+id/minutes_list"
             app:layout_constraintStart_toStartOf="@id/minutes_list"

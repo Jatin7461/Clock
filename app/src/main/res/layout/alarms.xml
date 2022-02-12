@@ -13,6 +13,7 @@
         android:layout_marginStart="16dp"
         android:fontFamily="sans-serif-light"
         android:text="TextView"
+        android:textColor="@color/white"
         android:textSize="44sp"
 
         app:layout_constraintBottom_toTopOf="@+id/alarm_days"
@@ -28,6 +29,7 @@
         android:scaleX="1.8"
         android:scaleY="1.8"
         android:switchMinWidth="52dp"
+        android:trackTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

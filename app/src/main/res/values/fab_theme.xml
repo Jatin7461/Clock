@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="custom_fab_theme">
+
+        <item name="colorSecondary">@color/dark</item>
+    </style>
+
+</resources>

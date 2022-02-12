@@ -19,7 +19,7 @@
         android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stopwatch_button"
+        app:layout_constraintBottom_toTopOf="@+id/stopwatch_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,12 +29,15 @@
         android:id="@+id/list_of_alarms"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/dark"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/stopwatch_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!--        android:dividerHeight="0.5px"-->
+    <!--        android:divider="@color/white"-->
     <!--    <androidx.recyclerview.widget.RecyclerView-->
     <!--        android:id="@+id/alarm_list"-->
     <!--        android:layout_width="match_parent"-->
@@ -173,4 +176,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

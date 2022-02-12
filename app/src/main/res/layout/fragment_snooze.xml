@@ -20,6 +20,7 @@
         android:id="@+id/snooze_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/dark"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,64 +30,62 @@
             android:id="@+id/min_5"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/white"
+
 
             android:fontFamily="sans-serif-thin"
             android:gravity="center|left"
             android:paddingLeft="16dp"
-            android:textStyle="bold"
             android:text="@string/minutes_five"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/min_10" />
 
         <TextView
             android:id="@+id/min_10"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/white"
 
             android:fontFamily="sans-serif-thin"
             android:gravity="center|left"
             android:paddingLeft="16dp"
-            android:textStyle="bold"
-
             android:text="@string/minutes_ten"
-            android:textColor="@color/black"
+
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/min_15" />
 
         <TextView
             android:id="@+id/min_15"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/white"
 
             android:fontFamily="sans-serif-thin"
             android:gravity="center|left"
 
             android:paddingLeft="16dp"
-            android:textStyle="bold"
             android:text="@string/minutes_fifteen"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/min_30" />
 
         <TextView
             android:id="@+id/min_30"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/white"
 
             android:fontFamily="sans-serif-thin"
             android:gravity="center|left"
             android:paddingLeft="16dp"
-            android:textStyle="bold"
             android:text="@string/minutes_thirty"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <RadioButton
             android:id="@+id/button_five"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/white"
             android:checked="true"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/min_5"
@@ -97,6 +96,7 @@
             android:id="@+id/button_ten"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/white"
             android:checked="true"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/min_10"
@@ -108,6 +108,7 @@
             android:id="@+id/button_fifteen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/white"
             android:checked="true"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/min_15"
@@ -118,6 +119,7 @@
             android:id="@+id/button_thirty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/white"
             android:checked="true"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/min_30"

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clock.Fragments.SnoozeFragment;
 import com.example.clock.Fragments.TextBoxDialog;
+import com.example.clock.LinearLayoutManager.CustomLayoutManager;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -214,6 +215,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
             final LinearSnapHelper minutesSnap = new LinearSnapHelper();
 
             LinearLayoutManager minLayoutManager = new LinearLayoutManager(this);
+//            CustomLayoutManager minLayoutManager = new CustomLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             minutesRecyclerView = findViewById(R.id.minutes_list);
             minutesRecyclerView.setLayoutManager(minLayoutManager);
             minutesAdapter = new NumberAdapter(minutesList);
@@ -234,7 +236,7 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                     LinearLayoutManager lManager = (LinearLayoutManager) minutesRecyclerView.getLayoutManager();
                     int firstElementPosition = lManager.findFirstVisibleItemPosition();
                     minutePosition = firstElementPosition;
-                    Log.v(TAG, "minutes view dx " + dx + " dy " + dy);
+//                    Log.v(TAG, "minutes view dx " + dx + " dy " + dy);
 
 
                 }
@@ -248,13 +250,9 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
 
                     LinearLayoutManager linearLayoutManager = (LinearLayoutManager) hoursRecyclerView.getLayoutManager();
                     hoursPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                    RecyclerView.ViewHolder viewHolder = hoursRecyclerView.findViewHolderForAdapterPosition(hoursPosition + 2);
-                    int location[] = new int[2];
-                    viewHolder.itemView.getLocationOnScreen(location);
-                    Log.v(TAG, "view holder location x " + location[0] + " y " + location[1]);
+
 //                    int pos = linearLayoutManager.findLastVisibleItemPosition();
 //                    RecyclerView.ViewHolder viewHolder1 = hoursRecyclerView.findViewHolderForAdapterPosition(pos - 2);
-//                    viewHolder1.itemView.setBackgroundColor(getResources().getColor(R.color.white));
 
                 }
             });
@@ -321,10 +319,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (sun == false) {
-                        sunday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        sunday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         sun = true;
                     } else {
-                        sunday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        sunday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         sun = false;
                     }
 
@@ -334,10 +332,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (mon) {
-                        monday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        monday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         mon = false;
                     } else {
-                        monday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        monday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         mon = true;
                     }
                 }
@@ -346,10 +344,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (tue) {
-                        tuesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        tuesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         tue = false;
                     } else {
-                        tuesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        tuesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         tue = true;
                     }
                 }
@@ -358,10 +356,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (wed) {
-                        wednesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        wednesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         wed = false;
                     } else {
-                        wednesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        wednesday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         wed = true;
                     }
                 }
@@ -370,10 +368,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (thu) {
-                        thursday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        thursday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         thu = false;
                     } else {
-                        thursday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        thursday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         thu = true;
                     }
                 }
@@ -382,10 +380,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (fri) {
-                        friday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        friday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         fri = false;
                     } else {
-                        friday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        friday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         fri = true;
                     }
                 }
@@ -394,10 +392,10 @@ public class NewAlarmActivity extends AppCompatActivity implements SnoozeFragmen
                 @Override
                 public void onClick(View view) {
                     if (sat) {
-                        saturday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.teal_200)));
+                        saturday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.dark)));
                         sat = false;
                     } else {
-                        saturday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.purple_200)));
+                        saturday.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_selected)));
                         sat = true;
                     }
                 }
