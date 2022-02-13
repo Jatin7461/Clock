@@ -28,6 +28,7 @@
             android:name=".AlarmActivity"
             android:excludeFromRecents="true"
             android:exported="false"
+
             android:screenOrientation="portrait"
             android:showForAllUsers="true"
             android:showOnLockScreen="true"

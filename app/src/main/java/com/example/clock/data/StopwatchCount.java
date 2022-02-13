@@ -7,7 +7,7 @@ public class StopwatchCount {
     private String previousTime;
 
     public StopwatchCount(String presentTime, String previousTime, int count) {
-        this.count = "count " + count;
+        this.count = "Count " + count;
         this.presentTime = presentTime;
         this.previousTime = previousTime;
     }

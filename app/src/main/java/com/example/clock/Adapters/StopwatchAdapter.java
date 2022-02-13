@@ -69,6 +69,7 @@ public class StopwatchAdapter extends RecyclerView.Adapter<StopwatchAdapter.Stop
         this.list = list;
 //        notifyItemChanged(list.size() - 1);
         notifyItemInserted(0);
+//        notifyDataSetChanged();
     }
 
     public void resetList() {

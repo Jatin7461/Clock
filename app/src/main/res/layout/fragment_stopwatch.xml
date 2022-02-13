@@ -7,25 +7,47 @@
     android:background="@color/dark"
     tools:context=".Fragments.StopwatchFragment">
 
-
-    <TextView
-        android:id="@+id/stopwatch_screen"
+    <LinearLayout
+        android:id="@+id/stopwatch_display"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:background="@color/light_dark"
-        android:gravity="center"
-        android:text="@string/stopwatch_time"
-        android:textColor="@color/white"
-        android:textSize="50sp"
+        android:layout_height="200dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/stopwatch_screen"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:background="@color/light_dark"
+            android:gravity="center|bottom"
+            android:letterSpacing="0.1"
+            android:text="@string/stopwatch_time"
+            android:textColor="@color/white"
+            android:textSize="80sp" />
+
+        <TextView
+            android:id="@+id/millisec"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:background="@color/light_dark"
+            android:gravity="center|top"
+            android:text="@string/stopwatch_milli"
+            android:textColor="@color/white"
+            android:textSize="25sp" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/start_stopwatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/reset_stopwatch"
         app:layout_constraintEnd_toStartOf="@+id/reset_stopwatch"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,17 +57,18 @@
         android:id="@+id/reset_stopwatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/light_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/start_stopwatch"
-        app:layout_constraintTop_toBottomOf="@+id/stopwatch_screen"
-        app:layout_constraintVertical_bias="0.094" />
+        app:layout_constraintTop_toBottomOf="@+id/stopwatch_display" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/count_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

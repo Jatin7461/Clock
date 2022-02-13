@@ -2,6 +2,7 @@ package com.example.clock;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.KeyCycle;
 import androidx.constraintlayout.motion.widget.OnSwipe;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
@@ -100,16 +101,37 @@ public class AlarmActivity extends AppCompatActivity implements View.OnTouchList
     }
 
     @Override
+    protected void onUserLeaveHint() {
+        Log.v("", "home button pressed");
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
+//        if(keyCode==KeyEvent.KEYCODE_HOME||keyCode == KeyEvent.KEYCODE_BACK||keyCode==KeyEvent.KEYCODE)
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_POWER) {
-            snoozeAlarm(id, snoozeTime, Integer.parseInt(notificationHour), Integer.parseInt(notificationMin));
+            if (snooze < 5) {
+                snoozeAlarm(id, snoozeTime, Integer.parseInt(notificationHour), Integer.parseInt(notificationMin));
+            } else {
+                updateSnooze(id);
+            }
+//            snoozeAlarm(id, snoozeTime, Integer.parseInt(notificationHour), Integer.parseInt(notificationMin));
             handler.removeCallbacks(runnable);
             finish();
             return true;
+        } else {
+            Log.v("", "some buttons pressed");
+            return false;
         }
-        return super.onKeyDown(keyCode, event);
+//        return super.onKeyDown(keyCode, event);
     }
+
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

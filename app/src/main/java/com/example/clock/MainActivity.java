@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -39,6 +40,7 @@ import com.example.clock.Adapters.AlarmCursorAdapter;
 import com.example.clock.Fragments.AlarmFragment;
 import com.example.clock.Fragments.DeleteAlarmFragment;
 import com.example.clock.Fragments.StopwatchFragment;
+import com.example.clock.Fragments.TimerFragment;
 import com.example.clock.provider.AlarmContract;
 import com.example.clock.provider.AlarmContract.AlarmEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,12 +49,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private Button AlarmButton, StopwatchButton, TimerButton;
     private FloatingActionButton newAlarm;
-    private Fragment mAlarmFragment, mStopwatchFragment;
+    private Fragment mAlarmFragment, mStopwatchFragment, mTimerFragment;
     private ListView listView;
     private AlarmCursorAdapter adapter;
     private RecyclerView recyclerView;
     //    private AlarmAdapter recyclerAdapter;
     private Toolbar toolbar;
+    private final String STOPWATCH = "stopwatch", TIMER = "timer";
     private static final String TAG = MainActivity.class.getName();
     String manufacturer = Build.MANUFACTURER;
 
@@ -68,12 +71,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //
 //        }
         getSupportActionBar().setTitle(R.string.alarm);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment, AlarmFragment.class, null)
-                .commit();
+//        getSupportFragmentManager().beginTransaction()
+//                .add(R.id.fragment, AlarmFragment.class, null)
+//                .commit();
         mAlarmFragment = new AlarmFragment();
         mStopwatchFragment = new StopwatchFragment();
+        mTimerFragment = new TimerFragment();
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         newAlarm = findViewById(R.id.new_alarm);
         AlarmButton = findViewById(R.id.alarm_button);
@@ -94,22 +99,42 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         AlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mAlarmFragment).commit();
-                getSupportActionBar().setTitle(R.string.alarm);
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mAlarmFragment).commit();
+//                getSupportActionBar().setTitle(R.string.alarm);
                 newAlarm.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.VISIBLE);
 
             }
         });
+
         StopwatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mStopwatchFragment).commit();
+                if (fragmentManager.findFragmentByTag(STOPWATCH) == null)
+                    fragmentManager.beginTransaction().add(R.id.fragment, mStopwatchFragment, STOPWATCH).commit();
+                else if (fragmentManager.findFragmentByTag(STOPWATCH) != null)
+                    fragmentManager.beginTransaction().show(mStopwatchFragment).commit();
+                if (fragmentManager.findFragmentByTag(TIMER) != null)
+                    fragmentManager.beginTransaction().hide(mTimerFragment).commit();
+
                 getSupportActionBar().setTitle(R.string.stopwatch);
                 listView.setVisibility(View.GONE);
                 newAlarm.setVisibility(View.GONE);
 
             }
+        });
+
+        TimerButton.setOnClickListener((View view) -> {
+
+            if (fragmentManager.findFragmentByTag(TIMER) == null)
+                fragmentManager.beginTransaction().add(R.id.fragment, mTimerFragment, TIMER).commit();
+            else
+                fragmentManager.beginTransaction().show(mTimerFragment).commit();
+            if (fragmentManager.findFragmentByTag(STOPWATCH) != null)
+                fragmentManager.beginTransaction().hide(mStopwatchFragment).commit();
+            getSupportActionBar().setTitle(getResources().getString(R.string.timer));
+            listView.setVisibility(View.GONE);
+            newAlarm.setVisibility(View.GONE);
         });
 
         newAlarm.setOnClickListener(new View.OnClickListener() {
@@ -246,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 intent.putExtra(AlarmEntry.RINGTONE_URI, ringtoneUri);
                 intent.putExtra(AlarmEntry.VIBRATE, vibrate);
                 intent.putExtra(AlarmEntry.SNOOZE_TIME, snoozeTime);
-                intent.putExtra(AlarmEntry.LABEL,label);
+                intent.putExtra(AlarmEntry.LABEL, label);
                 startActivity(intent);
             }
         });
@@ -279,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 //        recyclerAdapter.swapCursor(null);
     }
+
 
 
 }

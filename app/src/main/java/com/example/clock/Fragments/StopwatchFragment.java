@@ -2,6 +2,8 @@ package com.example.clock.Fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.clock.Adapters.StopwatchAdapter;
 import com.example.clock.R;
@@ -30,10 +30,10 @@ public class StopwatchFragment extends Fragment {
     private Button mStartButton, mResetButton;
     View view;
     private long startTime = 0, updateTime = 0, timeGap = 0, timeinMilli = 0;
-    TextView screen;
+    TextView screen, millisec;
     final Handler handler = new Handler();
     private boolean startOrPause, resetOrCount;
-
+    private final String COUNT = "count", PRESENT = "present", PREVIOUS = "previous";
     RecyclerView recyclerView;
     StopwatchAdapter adapter;
     private int countNumber = 1;
@@ -54,7 +54,19 @@ public class StopwatchFragment extends Fragment {
             int hours = (minutes / 60) % 24;
             int realSeconds = seconds % 60;
             int realMinutes = minutes % 60;
-            screen.setText(String.format("%02d", hours) + ":" + String.format("%02d", realMinutes) + ":" + String.format("%02d", realSeconds) + ":" + String.format("%03d", milliseconds));
+
+            milliseconds /= 10;
+            String displayHour = String.format("%02d", hours);
+            String displayMin = String.format("%02d", realMinutes);
+            String displaySeconds = String.format("%02d", realSeconds);
+            String displayMilli = String.format("%02d", milliseconds);
+
+            if (hours > 0) {
+                screen.setTextSize(70);
+                screen.setText(displayHour + ":" + displayMin + ":" + displaySeconds);
+            } else
+                screen.setText(displayMin + ":" + displaySeconds);
+            millisec.setText(displayMilli);
 
 
             handler.postDelayed(this, 0);
@@ -72,8 +84,23 @@ public class StopwatchFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_stopwatch, container, false);
         screen = (TextView) view.findViewById(R.id.stopwatch_screen);
-
+        millisec = view.findViewById(R.id.millisec);
         list = new ArrayList<>();
+
+//        if (savedInstanceState != null) {
+//            ArrayList<String> count = savedInstanceState.getStringArrayList(COUNT);
+//            ArrayList<String> previous = savedInstanceState.getStringArrayList(PREVIOUS);
+//            ArrayList<String> present = savedInstanceState.getStringArrayList(PRESENT);
+//            int n = count.size();
+//            for (int i = 0; i < n; i++) {
+//                String getCount = count.get(i);
+//                String getPrevious = previous.get(i);
+//                String getPresent = present.get(i);
+//
+//                list.add(new StopwatchCount(getPresent, getPrevious, Integer.parseInt(getCount)));
+//            }
+//
+//        }
 
         //initialize the recycler view and adapter
         recyclerView = view.findViewById(R.id.count_list);
@@ -138,10 +165,11 @@ public class StopwatchFragment extends Fragment {
                     countNumber = 1;
                     adapter.resetList();
                     screen.setText(R.string.stopwatch_time);
+                    millisec.setText(R.string.stopwatch_milli);
                 }
                 //count button is pressed
                 else {
-                    list.add(0, new StopwatchCount(screen.getText().toString(), setSecondTime(), countNumber));
+                    list.add(0, new StopwatchCount(screen.getText().toString() + ":" + millisec.getText().toString(), setSecondTime(), countNumber));
                     countNumber += 1;
                     recyclerView.scrollToPosition(0);
                     adapter.updateList(list);
@@ -164,7 +192,11 @@ public class StopwatchFragment extends Fragment {
         int hours = (fakeMin / 60) % 24;
         int realSec = fakeSec % 60;
         int realMin = fakeMin % 60;
-        return "+" + String.format("%02d", hours) + ":" + String.format("%02d", realMin) + ":" + String.format("%02d", realSec) + ":" + String.format("%03d", milliSec);
+        String displayHour = String.format("%02d", hours);
+        String displayMin = String.format("%02d", realMin);
+        String displaySeconds = String.format("%02d", realSec);
+        String displayMilli = String.format("%02d", milliSec / 10);
+        return "+" + displayMin + ":" + displaySeconds + ":" + displayMilli;
 
     }
 
@@ -187,6 +219,30 @@ public class StopwatchFragment extends Fragment {
         presentTime = 0;
         timeDifference = 0;
         timeGap = 0;
+        screen.setTextSize(80);
         handler.removeCallbacks(r);
     }
+
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        ArrayList<String> count = new ArrayList<>();
+//        ArrayList<String> presentTime = new ArrayList<>();
+//        ArrayList<String> previousTime = new ArrayList<>();
+//        for (int i = 0; i < list.size(); i++) {
+//            String getCount = list.get(i).getCount();
+//            String getPresentTime = list.get(i).getPresentTime();
+//            String getPreviousTime = list.get(i).getPreviousTime();
+//
+//            count.add(getCount);
+//            presentTime.add(getPresentTime);
+//            previousTime.add(getPreviousTime);
+//
+//        }
+//
+//        outState.putStringArrayList(COUNT, count);
+//        outState.putStringArrayList(PRESENT, presentTime);
+//        outState.putStringArrayList(PREVIOUS, previousTime);
+//        outState.putString("str", "str");
+//    }
 }
